@@ -12,38 +12,34 @@ RUN apk add --no-cache \
     libffi-dev \
     bash
 
-# Copiar archivos de requirements
+# Copiar archivo de requerimientos e instalar dependencias
 COPY requirements.txt .
-
-# Instalar dependencias de Python
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copiar el código de la aplicación (todo el repo)
+# Copiar el código de la aplicación (todo el repositorio)
 COPY . .
 
-# Normalizar nombre de carpeta de plantillas a minúsculas (Linux es case-sensitive)
-RUN if [ -d "Templates" ] && [ ! -d "templates" ]; then \
-            echo "Renombrando Templates -> templates"; \
-            mv Templates templates; \
-        fi
-RUN if [ -d "Static" ] && [ ! -d "static" ]; then \
-            echo "Renombrando Static -> static"; \
-            mv Static static; \
-        fi
+# Normalizar nombres de carpetas para Linux (case-sensitive)
+RUN bash -c '\
+    if [ -d "Templates" ] && [ ! -d "templates" ]; then \
+        echo "Renombrando Templates -> templates"; \
+        mv Templates templates; \
+    fi; \
+    if [ -d "Static" ] && [ ! -d "static" ]; then \
+        echo "Renombrando Static -> static"; \
+        mv Static static; \
+    fi; \
+'
 
-# Comprobación en tiempo de build para verificar que las carpetas existen en la imagen
-# (no falla la build si no existen, pero imprime el contenido para diagnóstico)
-RUN echo "Build check: contenido de /app y /app/templates:" && \
-    ls -la /app || true && \
-    ls -la /app/templates || true && \
-    ls -la /app/templates/home || true
-
-# Copiar script de entrada y darle permisos
-COPY docker-entrypoint.sh /usr/local/bin/
-RUN chmod +x /usr/local/bin/docker-entrypoint.sh
-
-# Crear el directorio instance si no existe (para la base de datos)
+# Crear carpeta instance (para base de datos u otros archivos)
 RUN mkdir -p instance && chmod 777 instance
+
+# Verificar estructura de carpetas (solo para diagnóstico en build)
+RUN bash -c '\
+    echo "📂 Build check: /app y subcarpetas"; \
+    ls -la /app || true; \
+    if [ -d "/app/templates" ]; then ls -la /app/templates; fi; \
+'
 
 # Exponer el puerto 5000
 EXPOSE 5000
@@ -53,8 +49,9 @@ ENV FLASK_APP=run.py
 ENV FLASK_ENV=production
 ENV PYTHONPATH=/app
 
-# Configurar punto de entrada
-ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
-
-# Comando para ejecutar la aplicación con Gunicorn
-CMD ["gunicorn", "--config", "gunicorn.conf.py", "run:app"]
+# Comando por defecto: ejecutar Gunicorn
+CMD bash -c '\
+    echo "🔧 Iniciando aplicación Flask con Gunicorn..."; \
+    mkdir -p /app/instance && chmod 777 /app/instance; \
+    gunicorn --config gunicorn.conf.py run:app \
+'
