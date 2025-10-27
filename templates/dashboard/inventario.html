@@ -1,0 +1,313 @@
+{% extends 'dashboard/base.html' %}
+
+{% block content %}
+<div class="inventory-page">
+	<div class="container my-4">
+		<div class="form-card" id="inventoryCapture">
+			<div class="form-header">
+				<h3>🧾 Inventario de Habitación</h3>
+				<div class="sub">Control de inventario hotelero</div>
+			</div>
+			<div class="form-body">
+				<form id="inventoryForm" method="POST" action="{{ url_for('admin.inventario_save') }}">
+						<input type="hidden" name="habitacion_id" value="{{ (record.habitacion_id if record else (habitacion.id if habitacion else '')) }}" />
+						<input type="hidden" name="rec_id" value="{{ record.id if record else '' }}" />
+				<div class="info-section">
+					<div class="info-field d-flex flex-column">
+						<label class="fw-semibold">Hotel:</label>
+								<input class="form-control" type="text" name="hotel" placeholder="Nombre del hotel" value="{{ hotel_name }}" />
+					</div>
+					<div class="info-field d-flex flex-column">
+						<label class="fw-semibold">Número de Habitación:</label>
+								<input class="form-control" type="text" name="room_number" placeholder="Ej: 205" value="{{ (record.room_number if record else (habitacion.id if habitacion else '')) }}" />
+					</div>
+					<div class="info-field d-flex flex-column">
+						<label class="fw-semibold">Tipo de Habitación:</label>
+								<input class="form-control" type="text" name="room_type" placeholder="Ej: Suite" value="{{ (record.room_type if record else (habitacion.nombre if habitacion else '')) }}" />
+					</div>
+					<div class="info-field d-flex flex-column">
+						<label class="fw-semibold">Fecha de Inspección:</label>
+						<input class="form-control" type="date" name="inspection_date" value="{{ record.inspection_date if record else '' }}" />
+					</div>
+					<div class="info-field d-flex flex-column">
+						<label class="fw-semibold">Inspector:</label>
+						<input class="form-control" type="text" name="inspector" placeholder="Nombre del inspector" value="{{ record.inspector if record else '' }}" />
+					</div>
+				</div>
+
+				<div class="section">
+					<h2 class="section-title"> Dormitorio</h2>
+					<h3 class="subsection-title">Mobiliario</h3>
+					<div class="items-grid">
+						<div class="item">
+							<input type="checkbox" id="bed" name="bed" {% if items_map.get('bed') and items_map.get('bed').checked %}checked{% endif %} />
+							<label class="flex-grow-1" for="bed">Cama</label>
+							  <input class="form-control" name="bed_qty" type="number" placeholder="Cant." min="0" style="max-width:80px" value="{{ items_map.get('bed').quantity if items_map.get('bed') else '' }}" />
+						</div>
+						<div class="item">
+							<input type="checkbox" id="nightstand" name="nightstand" />
+							<label class="flex-grow-1" for="nightstand">Mesitas de noche</label>
+							  <input class="form-control" name="nightstand_qty" type="number" placeholder="Cant." min="0" style="max-width:80px" />
+						</div>
+						<div class="item">
+							<input type="checkbox" id="lamps" name="lamps" />
+							<label class="flex-grow-1" for="lamps">Lámparas de mesa</label>
+							  <input class="form-control" name="lamps_qty" type="number" placeholder="Cant." min="0" style="max-width:80px" />
+						</div>
+						<div class="item">
+							<input type="checkbox" id="closet" name="closet" />
+							<label class="flex-grow-1" for="closet">Armario/Closet</label>
+						</div>
+						<div class="item">
+							<input type="checkbox" id="chair" name="chair" />
+							<label class="flex-grow-1" for="chair">Silla/Sillón</label>
+							  <input class="form-control" name="chair_qty" type="number" placeholder="Cant." min="0" style="max-width:80px" />
+						</div>
+						<div class="item">
+							<input type="checkbox" id="desk" name="desk" />
+							<label class="flex-grow-1" for="desk">Escritorio</label>
+						</div>
+						<div class="item">
+							<input type="checkbox" id="mirror" name="mirror" />
+							<label class="flex-grow-1" for="mirror">Espejo de pared</label>
+						</div>
+					</div>
+
+					<h3 class="subsection-title">Ropa de Cama</h3>
+					<div class="items-grid">
+						<div class="item">
+							<input type="checkbox" id="mattress" name="mattress" />
+							<label class="flex-grow-1" for="mattress">Colchón</label>
+							  <input class="form-control" name="mattress_state" type="text" placeholder="Estado" style="max-width:120px" />
+						</div>
+						<div class="item">
+							<input type="checkbox" id="pillows" name="pillows" />
+							<label class="flex-grow-1" for="pillows">Almohadas</label>
+							  <input class="form-control" name="pillows_qty" type="number" placeholder="Cant." min="0" style="max-width:80px" />
+						</div>
+						<div class="item">
+							<input type="checkbox" id="sheets" name="sheets" />
+							<label class="flex-grow-1" for="sheets">Sábanas juego completo</label>
+						</div>
+						<div class="item">
+							<input type="checkbox" id="comforter" name="comforter" />
+							<label class="flex-grow-1" for="comforter">Edredón/Colcha</label>
+						</div>
+						<div class="item">
+							<input type="checkbox" id="blanket" name="blanket" />
+							<label class="flex-grow-1" for="blanket">Cobertor adicional</label>
+						</div>
+						<div class="item">
+							<input type="checkbox" id="cushions" name="cushions" />
+							<label class="flex-grow-1" for="cushions">Cojines decorativos</label>
+							  <input class="form-control" name="cushions_qty" type="number" placeholder="Cant." min="0" style="max-width:80px" />
+						</div>
+					</div>
+				</div>
+
+				<div class="section">
+					<h2 class="section-title">Baño</h2>
+					<h3 class="subsection-title">Mobiliario y Accesorios</h3>
+					<div class="items-grid">
+						<div class="item"><input type="checkbox" id="bath_mirror" name="bath_mirror" /><label class="flex-grow-1" for="bath_mirror">Espejo</label></div>
+						<div class="item"><input type="checkbox" id="towel_rack" name="towel_rack" /><label class="flex-grow-1" for="towel_rack">Toallero/Perchero</label></div>
+						<div class="item"><input type="checkbox" id="trash_bin" name="trash_bin" /><label class="flex-grow-1" for="trash_bin">Papelera</label></div>
+						<div class="item"><input type="checkbox" id="scale" name="scale" /><label class="flex-grow-1" for="scale">Balanza/Báscula</label></div>
+						<div class="item"><input type="checkbox" id="hairdryer" name="hairdryer" /><label class="flex-grow-1" for="hairdryer">Secador de cabello</label></div>
+					</div>
+					<h3 class="subsection-title">Amenidades</h3>
+					<div class="items-grid">
+						<div class="item"><input type="checkbox" id="bath_towels" name="bath_towels" /><label class="flex-grow-1" for="bath_towels">Toallas grandes</label><input class="form-control" name="bath_towels_qty" type="number" placeholder="Cant." min="0" style="max-width:80px" /></div>
+						<div class="item"><input type="checkbox" id="hand_towels" name="hand_towels" /><label class="flex-grow-1" for="hand_towels">Toallas de mano</label><input class="form-control" name="hand_towels_qty" type="number" placeholder="Cant." min="0" style="max-width:80px" /></div>
+						<div class="item"><input type="checkbox" id="soap" name="soap" /><label class="flex-grow-1" for="soap">Jabón/Gel de baño</label></div>
+						<div class="item"><input type="checkbox" id="shampoo" name="shampoo" /><label class="flex-grow-1" for="shampoo">Shampoo</label></div>
+						<div class="item"><input type="checkbox" id="conditioner" name="conditioner" /><label class="flex-grow-1" for="conditioner">Acondicionador</label></div>
+						<div class="item"><input type="checkbox" id="lotion" name="lotion" /><label class="flex-grow-1" for="lotion">Loción corporal</label></div>
+						<div class="item"><input type="checkbox" id="dental_kit" name="dental_kit" /><label class="flex-grow-1" for="dental_kit">Kit dental</label></div>
+						<div class="item"><input type="checkbox" id="toilet_paper" name="toilet_paper" /><label class="flex-grow-1" for="toilet_paper">Papel higiénico</label><input class="form-control" name="toilet_paper_qty" type="number" placeholder="Rollos" min="0" style="max-width:80px" /></div>
+					</div>
+				</div>
+
+				<div class="section">
+					<h2 class="section-title">Electrónica y entretenimiento</h2>
+					<div class="items-grid">
+						<div class="item"><input type="checkbox" id="tv" name="tv" /><label class="flex-grow-1" for="tv">Televisor</label><input class="form-control" name="tv_model" type="text" placeholder="Modelo" style="max-width:120px" /></div>
+						<div class="item"><input type="checkbox" id="remote" name="remote" /><label class="flex-grow-1" for="remote">Control remoto TV</label></div>
+						<div class="item"><input type="checkbox" id="phone" name="phone" /><label class="flex-grow-1" for="phone">Teléfono</label></div>
+						<div class="item"><input type="checkbox" id="alarm" name="alarm" /><label class="flex-grow-1" for="alarm">Radio reloj despertador</label></div>
+						<div class="item"><input type="checkbox" id="safe" name="safe" /><label class="flex-grow-1" for="safe">Caja fuerte</label></div>
+						<div class="item"><input type="checkbox" id="minibar" name="minibar" /><label class="flex-grow-1" for="minibar">Minibar/Refrigerador</label></div>
+						<div class="item"><input type="checkbox" id="coffee_maker" name="coffee_maker" /><label class="flex-grow-1" for="coffee_maker">Cafetera/Hervidor</label></div>
+					</div>
+				</div>
+
+				<div class="section">
+					<h2 class="section-title"> Menaje y suministros</h2>
+					<div class="items-grid">
+						<div class="item"><input type="checkbox" id="glasses" name="glasses" /><label class="flex-grow-1" for="glasses">Vasos de vidrio</label><input class="form-control" name="glasses_qty" type="number" placeholder="Cant." min="0" style="max-width:80px" /></div>
+						<div class="item"><input type="checkbox" id="cups" name="cups" /><label class="flex-grow-1" for="cups">Tazas/Mugs</label><input class="form-control" name="cups_qty" type="number" placeholder="Cant." min="0" style="max-width:80px" /></div>
+						<div class="item"><input type="checkbox" id="spoons" name="spoons" /><label class="flex-grow-1" for="spoons">Cucharas</label><input class="form-control" name="spoons_qty" type="number" placeholder="Cant." min="0" style="max-width:80px" /></div>
+						<div class="item"><input type="checkbox" id="opener" name="opener" /><label class="flex-grow-1" for="opener">Abrebotellas</label></div>
+						<div class="item"><input type="checkbox" id="coffee" name="coffee" /><label class="flex-grow-1" for="coffee">Café/Té</label><input class="form-control" name="coffee_qty" type="number" placeholder="Sobres" min="0" style="max-width:80px" /></div>
+						<div class="item"><input type="checkbox" id="sugar" name="sugar" /><label class="flex-grow-1" for="sugar">Azúcar/Endulzante</label><input class="form-control" name="sugar_qty" type="number" placeholder="Sobres" min="0" style="max-width:80px" /></div>
+					</div>
+				</div>
+
+				<div class="section">
+					<h2 class="section-title"> Otros elementos</h2>
+					<div class="items-grid">
+						<div class="item"><input type="checkbox" id="curtains" name="curtains" /><label class="flex-grow-1" for="curtains">Cortinas decorativas</label></div>
+						<div class="item"><input type="checkbox" id="blackout" name="blackout" /><label class="flex-grow-1" for="blackout">Cortinas blackout</label></div>
+						<div class="item"><input type="checkbox" id="directory" name="directory" /><label class="flex-grow-1" for="directory">Directorio de servicios</label></div>
+						<div class="item"><input type="checkbox" id="menu" name="menu" /><label class="flex-grow-1" for="menu">Menú room service</label></div>
+						<div class="item"><input type="checkbox" id="smoke_detector" name="smoke_detector" /><label class="flex-grow-1" for="smoke_detector">Detector de humo</label></div>
+						<div class="item"><input type="checkbox" id="evacuation_map" name="evacuation_map" /><label class="flex-grow-1" for="evacuation_map">Mapa de evacuación</label></div>
+						<div class="item"><input type="checkbox" id="hangers" name="hangers" /><label class="flex-grow-1" for="hangers">Perchas en closet</label><input class="form-control" name="hangers_qty" type="number" placeholder="Cant." min="0" style="max-width:80px" /></div>
+						<div class="item"><input type="checkbox" id="umbrella" name="umbrella" /><label class="flex-grow-1" for="umbrella">Paraguas</label></div>
+					</div>
+				</div>
+
+				<div class="observations">
+					<h3 class="mb-2">Observaciones y estado general</h3>
+					<textarea class="form-control" name="observations" placeholder="Elementos dañados, faltantes o comentarios adicionales..." rows="4"></textarea>
+								<div class="rating d-flex gap-4 flex-wrap mt-3">
+									<input type="hidden" name="rating_cleaning" id="rating_cleaning" value="0" />
+									<input type="hidden" name="rating_furniture" id="rating_furniture" value="0" />
+									<input type="hidden" name="rating_equipment" id="rating_equipment" value="0" />
+						<div class="rating-item d-flex flex-column gap-1">
+							<label class="fw-semibold">Limpieza general:</label>
+							<div class="stars" data-rating="cleaning">
+								<span class="star" data-value="1">★</span>
+								<span class="star" data-value="2">★</span>
+								<span class="star" data-value="3">★</span>
+								<span class="star" data-value="4">★</span>
+								<span class="star" data-value="5">★</span>
+							</div>
+						</div>
+						<div class="rating-item d-flex flex-column gap-1">
+							<label class="fw-semibold">Estado del mobiliario:</label>
+							<div class="stars" data-rating="furniture">
+								<span class="star" data-value="1">★</span>
+								<span class="star" data-value="2">★</span>
+								<span class="star" data-value="3">★</span>
+								<span class="star" data-value="4">★</span>
+								<span class="star" data-value="5">★</span>
+							</div>
+						</div>
+						<div class="rating-item d-flex flex-column gap-1">
+							<label class="fw-semibold">Funcionamiento equipos:</label>
+							<div class="stars" data-rating="equipment">
+								<span class="star" data-value="1">★</span>
+								<span class="star" data-value="2">★</span>
+								<span class="star" data-value="3">★</span>
+								<span class="star" data-value="4">★</span>
+								<span class="star" data-value="5">★</span>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="signature-section row g-3 mt-3 p-3" style="background:#e8f4f8;border-radius:12px;">
+					<div class="col-md-6">
+						<label class="fw-semibold"> Firma Inspector:</label>
+						<input class="form-control mb-2" type="text" name="inspector_signature" placeholder="Nombre y firma" value="{{ record.inspector_signature if record else '' }}" />
+						<input class="form-control" type="date" name="inspector_date" value="{{ record.inspector_date if record else '' }}" />
+					</div>
+					<div class="col-md-6">
+						<label class="fw-semibold"> Firma Supervisor:</label>
+						<input class="form-control mb-2" type="text" name="supervisor_signature" placeholder="Nombre y firma" value="{{ record.supervisor_signature if record else '' }}" />
+						<input class="form-control" type="date" name="supervisor_date" value="{{ record.supervisor_date if record else '' }}" />
+					</div>
+				</div>
+				<div class="d-flex justify-content-center gap-3 mt-4 no-print flex-wrap">
+					<button type="button" class="btn btn-cancel btn-lg px-4" id="btn-reset"><i class="bi bi-arrow-repeat me-1"></i> Limpiar</button>
+					<button type="submit" class="btn btn-form-primary btn-lg px-4"><i class="bi bi-save me-1"></i> Guardar en BD</button>
+				</div>
+			</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- html2pdf.js from CDN for client-side PDF export -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-YcsIP+ZB0nEo3qvWlCyv+VY9G0Y1hu0m3E1rR3z5FqUo3f4wF3oQn6X0Ewe1k4z8c1iD6rE0jJqO6vZ8xZ9W0w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+	// Stars rating behavior
+		document.querySelectorAll('.stars').forEach(starContainer => {
+		const stars = starContainer.querySelectorAll('.star');
+		stars.forEach(star => {
+			star.addEventListener('click', function () {
+				const value = this.dataset.value;
+				stars.forEach(s => {
+					if (Number(s.dataset.value) <= Number(value)) s.classList.add('active');
+					else s.classList.remove('active');
+				});
+					const ratingName = starContainer.getAttribute('data-rating');
+					const input = document.getElementById('rating_' + ratingName);
+					if (input) input.value = value;
+			});
+		});
+		// Inicializar desde valores guardados
+		const ratingName = starContainer.getAttribute('data-rating');
+		const input = document.getElementById('rating_' + ratingName);
+		const current = Number(input?.value || 0);
+		if (current > 0) {
+			stars.forEach(s => { if (Number(s.dataset.value) <= current) s.classList.add('active'); });
+		}
+	});
+
+	// Reset form
+	document.getElementById('btn-reset').addEventListener('click', function () {
+		if (confirm('¿Estás seguro de que deseas limpiar todo el formulario?')) {
+			document.getElementById('inventoryForm').reset();
+			document.querySelectorAll('.star').forEach(star => star.classList.remove('active'));
+		}
+	});
+
+	// Botón PDF eliminado; exporta desde la lista con acción dedicada
+</script>
+{% if items_map %}
+<script>
+	(function(){
+		const itemsMap = {{ items_map|tojson }};
+		Object.keys(itemsMap).forEach(k => {
+			const m = itemsMap[k] || {};
+			const chk = document.querySelector(`input[name="${k}"]`);
+			if (chk) chk.checked = !!m.checked;
+			const qty = document.querySelector(`input[name="${k}_qty"]`);
+			if (qty && m.quantity != null) qty.value = m.quantity;
+			// Campos de texto especiales
+			if (k === 'mattress') {
+				const t = document.querySelector('input[name="mattress_state"]');
+				if (t && m.value_text) t.value = m.value_text;
+			}
+			if (k === 'tv') {
+				const t = document.querySelector('input[name="tv_model"]');
+				if (t && m.value_text) t.value = m.value_text;
+			}
+		});
+	})();
+</script>
+{% endif %}
+{% if auto_pdf %}
+<script>
+	window.addEventListener('load', function(){
+		setTimeout(function(){
+			try{
+				const element = document.getElementById('inventoryCapture');
+				const room = (document.querySelector('input[name="room_number"]').value || 'Habitacion').replace(/[^\w\-]+/g,'_');
+				const opt = {
+					margin:       10,
+					filename:     `Inventario_${room}.pdf`,
+					image:        { type: 'jpeg', quality: 0.98 },
+					html2canvas:  { scale: 2, useCORS: true },
+					jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+				};
+				html2pdf().set(opt).from(element).save();
+			}catch(e){ console.error(e); }
+		}, 300);
+	});
+</script>
+{% endif %}
+{% endblock %}
+

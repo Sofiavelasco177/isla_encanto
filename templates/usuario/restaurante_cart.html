@@ -1,0 +1,89 @@
+{% extends 'usuario/base.html' %}
+
+{% block content %}
+<div class="container my-4">
+  <h2 class="mb-3">Tu Pedido y Reserva</h2>
+
+  <div class="row g-4">
+    <div class="col-lg-7">
+      <form method="post" action="{{ url_for('restaurante_cart.cart_update') }}" class="card p-3">
+        <h5 class="mb-3">Carrito</h5>
+  {% if cart_items %}
+          <div class="table-responsive">
+            <table class="table align-middle">
+              <thead>
+                <tr>
+                  <th>Plato</th>
+                  <th class="text-end">Precio</th>
+                  <th class="text-center" style="width:120px">Cant.</th>
+                  <th class="text-end">Subtotal</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+              {% for it in cart_items %}
+                <tr>
+                  <td>{{ it.nombre }}</td>
+                  <td class="text-end">${{ '{:,.0f}'.format(it.precio) }}</td>
+                  <td class="text-center">
+                    <input type="number" min="1" class="form-control form-control-sm text-center" name="qty_{{ it.plato_id }}" value="{{ it.cantidad }}" />
+                  </td>
+                  <td class="text-end">${{ '{:,.0f}'.format(it.subtotal) }}</td>
+                  <td>
+                    <form method="post" action="{{ url_for('restaurante_cart.cart_remove') }}">
+                      <input type="hidden" name="plato_id" value="{{ it.plato_id }}" />
+                      <button class="btn btn-link text-danger p-0">Quitar</button>
+                    </form>
+                  </td>
+                </tr>
+              {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center gap-2">
+              <label class="mb-0">Cupo de personas:</label>
+              <input type="number" min="1" name="people" value="{{ cart.people }}" class="form-control form-control-sm" style="width:90px" />
+            </div>
+            <button type="submit" class="btn btn-outline-primary">Actualizar</button>
+          </div>
+        {% else %}
+          <p class="text-muted">Tu carrito está vacío.</p>
+        {% endif %}
+      </form>
+
+      <div class="mt-3">
+        <a href="{{ url_for('main.restaurante_usuario') }}" class="btn btn-link">Seguir viendo el menú</a>
+      </div>
+    </div>
+
+    <div class="col-lg-5">
+      <div class="card p-3">
+        <h5 class="mb-3">Confirmar Reserva</h5>
+        <div class="d-flex justify-content-between">
+          <div>Total</div>
+          <div class="fw-bold">${{ '{:,.0f}'.format(cart.total or 0) }} COP</div>
+        </div>
+        <hr />
+        <form method="post" action="{{ url_for('restaurante_cart.reservar_restaurante') }}">
+          <div class="mb-2">
+            <label class="form-label">Nombre</label>
+            <input type="text" name="nombre" class="form-control" placeholder="Tu nombre" />
+          </div>
+          <div class="mb-2">
+            <label class="form-label">Teléfono</label>
+            <input type="text" name="telefono" class="form-control" placeholder="Tu teléfono" />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Cupo de personas</label>
+            <input type="number" min="1" name="cupo" class="form-control" value="{{ cart.people }}" />
+          </div>
+          <button type="submit" class="btn btn-success w-100">Generar ticket PDF</button>
+          <div class="form-text mt-2">Pagas en el lugar al presentar el ticket.</div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,347 @@
+<!-- Modal de especificaciones para habitación {{ h.nombre }} -->
+<div class="modal fade" id="modalHabitacion{{ h.id }}" tabindex="-1" aria-labelledby="modalLabel{{ h.id }}" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="position-relative">
+                <!-- Imagen de la habitación -->
+                <div style="height: 160px; overflow: hidden;">
+                    {% set raw = h.imagen or '' %}
+                    {% if raw and (raw[:4]|lower == 'http') %}
+                        {% set img_url = raw %}
+                    {% else %}
+                        {% set fn = (raw|replace('\\\\','/')|replace('\\','/') ) %}
+                        {% if fn.startswith('/static/') %}{% set fn = fn[8:] %}{% endif %}
+                        {% if fn.startswith('static/') %}{% set fn = fn[7:] %}{% endif %}
+                        {% set img_url = url_for('static', filename=fn if fn else 'img/default.jpg') %}
+                    {% endif %}
+                    <img src="{{ img_url }}" alt="{{ h.nombre }}" class="w-100 h-100" style="object-fit: cover;" 
+                         onerror="this.onerror=null;this.src='{{ url_for('static', filename='img/default.jpg') }}'">
+                </div>
+                
+                <!-- Botón de cerrar -->
+                <button type="button" class="btn-close position-absolute top-0 end-0 m-3 bg-white rounded-circle p-2 shadow-sm" 
+                        data-bs-dismiss="modal" aria-label="Close" style="width: 40px; height: 40px;"></button>
+                
+                <!-- Badge de precio -->
+                <div class="position-absolute bottom-0 start-0 m-2">
+                    <div class="bg-white px-2 py-1 rounded-pill shadow-sm">
+                        <span class="fs-6 fw-bold text-primary">${{ '{:,.0f}'.format(h.precio) }}</span>
+                        <span class="text-muted" style="font-size: 0.75rem;">COP por noche</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-body p-3">
+                <!-- Título y descripción -->
+                <h2 class="fw-bold fs-5 text-dark mb-2">{{ h.nombre }}</h2>
+                <p class="text-muted mb-3" style="font-size: 0.85rem;">
+                    {{ h.descripcion or 'Espaciosa habitación con todas las comodidades para una estadía inolvidable.' }}
+                </p>
+
+                <!-- Especificaciones -->
+                <div class="mb-3">
+                    <h3 class="fs-6 fw-semibold text-dark mb-2">Especificaciones</h3>
+                    <div class="row g-1">
+                        <!-- Área -->
+                        <div class="col-6">
+                            <div class="d-flex align-items-center gap-2 p-2 bg-light rounded-2">
+                                <div class="bg-primary bg-opacity-10 p-1 rounded-2">
+                                    <i class="bi bi-rulers text-primary" style="font-size: 0.9rem;"></i>
+                                </div>
+                                <div>
+                                    <p class="text-muted mb-0" style="font-size: 0.7rem;">Área</p>
+                                    <p class="fw-semibold mb-0" style="font-size: 0.8rem;">{{ h.area or '35' }} m²</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Cama -->
+                        <div class="col-6">
+                            <div class="d-flex align-items-center gap-2 p-2 bg-light rounded-2">
+                                <div class="bg-primary bg-opacity-10 p-1 rounded-2">
+                                    <i class="bi bi-house-door text-primary" style="font-size: 0.9rem;"></i>
+                                </div>
+                                <div>
+                                    <p class="text-muted mb-0" style="font-size: 0.7rem;">Cama</p>
+                                    <p class="fw-semibold mb-0" style="font-size: 0.8rem;">
+                                        {% if 'suite' in h.nombre.lower() or 'deluxe' in h.nombre.lower() %}
+                                            King Size
+                                        {% elif h.cupo_personas >= 3 %}
+                                            Queen Size
+                                        {% else %}
+                                            Matrimonial
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Capacidad -->
+                        <div class="col-6">
+                            <div class="d-flex align-items-center gap-2 p-2 bg-light rounded-2">
+                                <div class="bg-primary bg-opacity-10 p-1 rounded-2">
+                                    <i class="bi bi-people text-primary" style="font-size: 0.9rem;"></i>
+                                </div>
+                                <div>
+                                    <p class="text-muted mb-0" style="font-size: 0.7rem;">Capacidad</p>
+                                    <p class="fw-semibold mb-0" style="font-size: 0.8rem;">{{ h.cupo_personas }} persona{{ 's' if h.cupo_personas != 1 else '' }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Baño -->
+                        <div class="col-6">
+                            <div class="d-flex align-items-center gap-2 p-2 bg-light rounded-2">
+                                <div class="bg-primary bg-opacity-10 p-1 rounded-2">
+                                    <i class="bi bi-droplet text-primary" style="font-size: 0.9rem;"></i>
+                                </div>
+                                <div>
+                                    <p class="text-muted mb-0" style="font-size: 0.7rem;">Baño</p>
+                                    <p class="fw-semibold mb-0" style="font-size: 0.8rem;">
+                                        {% if 'suite' in h.nombre.lower() %}
+                                            Privado con jacuzzi
+                                        {% else %}
+                                            Privado con ducha
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Amenidades -->
+                <div class="mb-3">
+                    <h3 class="fs-6 fw-semibold text-dark mb-2">Amenidades</h3>
+                    <div class="row g-1">
+                        <!-- WiFi -->
+                        <div class="col-6">
+                            <div class="d-flex align-items-center gap-2 p-1 bg-primary bg-opacity-5 rounded-2">
+                                <i class="bi bi-wifi text-primary" style="font-size: 0.8rem;"></i>
+                                <span class="fw-medium text-dark" style="font-size: 0.8rem;">WiFi gratis</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Aire acondicionado -->
+                        {% if 'suite' in h.nombre.lower() or 'deluxe' in h.nombre.lower() or h.plan in ['oro', 'plata'] %}
+                        <div class="col-6">
+                            <div class="d-flex align-items-center gap-2 p-1 bg-primary bg-opacity-5 rounded-2">
+                                <i class="bi bi-wind text-primary" style="font-size: 0.8rem;"></i>
+                                <span class="fw-medium text-dark" style="font-size: 0.8rem;">Aire acondicionado</span>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        <!-- TV -->
+                        <div class="col-6">
+                            <div class="d-flex align-items-center gap-2 p-1 bg-primary bg-opacity-5 rounded-2">
+                                <i class="bi bi-tv text-primary" style="font-size: 0.8rem;"></i>
+                                <span class="fw-medium text-dark" style="font-size: 0.8rem;">
+                                    {% if 'suite' in h.nombre.lower() %}
+                                        TV Smart 55"
+                                    {% elif 'deluxe' in h.nombre.lower() %}
+                                        TV Smart 50"
+                                    {% else %}
+                                        TV Smart 42"
+                                    {% endif %}
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <!-- Minibar -->
+                        {% if 'suite' in h.nombre.lower() or h.plan == 'oro' %}
+                        <div class="col-6">
+                            <div class="d-flex align-items-center gap-2 p-2 bg-primary bg-opacity-5 rounded-2">
+                                <i class="bi bi-cup-straw text-primary" style="font-size: 0.9rem;"></i>
+                                <span class="fw-medium text-dark small">Minibar</span>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        <!-- Balcón -->
+                        {% if 'ocean' in h.nombre.lower() or 'vista' in h.nombre.lower() %}
+                        <div class="col-6">
+                            <div class="d-flex align-items-center gap-2 p-2 bg-primary bg-opacity-5 rounded-2">
+                                <i class="bi bi-eye text-primary" style="font-size: 0.9rem;"></i>
+                                <span class="fw-medium text-dark small">Vista al océano</span>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        <!-- Escritorio -->
+                        {% if 'suite' in h.nombre.lower() or 'deluxe' in h.nombre.lower() %}
+                        <div class="col-6">
+                            <div class="d-flex align-items-center gap-2 p-2 bg-primary bg-opacity-5 rounded-2">
+                                <i class="bi bi-laptop text-primary" style="font-size: 0.9rem;"></i>
+                                <span class="fw-medium text-dark small">Área de trabajo</span>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Botón de reservar -->
+                <div class="d-grid mt-3">
+                    <a href="{{ url_for('hospedaje_usuario.reservar_habitacion', habitacion_id=h.id) }}" 
+                       class="btn btn-primary fw-semibold py-2 rounded-3 shadow-sm" style="font-size: 0.9rem;">
+                        <i class="bi bi-calendar-check me-2"></i>Reservar Ahora
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Estilos y JavaScript para este modal -->
+<style>
+    /* Estilos para los modales */
+    .modal {
+        z-index: 1060;
+        padding-top: 80px;
+    }
+    
+    .modal-backdrop {
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1055;
+    }
+    
+    .modal-dialog {
+        max-width: 450px;
+        margin: 1rem auto;
+    }
+    
+    .modal-content {
+        max-height: calc(100vh - 120px);
+        overflow-y: auto;
+        border-radius: 1rem;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+    
+    .btn-close {
+        background-size: 16px;
+        opacity: 0.8;
+        transition: opacity 0.2s ease;
+    }
+    
+    .btn-close:hover {
+        opacity: 1;
+    }
+    
+    .bg-primary.bg-opacity-5 {
+        background-color: rgba(13, 110, 253, 0.05);
+    }
+    
+    .bg-primary.bg-opacity-10 {
+        background-color: rgba(13, 110, 253, 0.1);
+    }
+    
+    /* Responsividad */
+    @media (max-width: 576px) {
+        .modal {
+            padding-top: 60px;
+        }
+        
+        .modal-dialog {
+            max-width: 95%;
+            margin: 0.5rem auto;
+        }
+        
+        .modal-content {
+            max-height: calc(100vh - 80px);
+        }
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Función para manejar este modal específico
+    const modalId = 'modalHabitacion{{ h.id }}';
+    const modalElement = document.getElementById(modalId);
+    const triggerButton = document.querySelector('[data-bs-target="#' + modalId + '"]');
+    
+    if (!modalElement || !triggerButton) return;
+    
+    // Función para mostrar el modal
+    function showModal() {
+        if (typeof bootstrap !== 'undefined') {
+            // Usar Bootstrap si está disponible
+            try {
+                const modal = new bootstrap.Modal(modalElement);
+                modal.show();
+                
+                // Ajustar estilos dopo mostrar
+                modalElement.addEventListener('shown.bs.modal', function() {
+                    modalElement.style.zIndex = '1060';
+                    modalElement.style.paddingTop = '80px';
+                    const backdrop = document.querySelector('.modal-backdrop');
+                    if (backdrop) {
+                        backdrop.style.zIndex = '1055';
+                    }
+                });
+                
+            } catch (error) {
+                showModalFallback();
+            }
+        } else {
+            // Fallback manual
+            showModalFallback();
+        }
+    }
+    
+    // Función fallback para mostrar modal sin Bootstrap
+    function showModalFallback() {
+        // Mostrar modal
+        modalElement.style.display = 'block';
+        modalElement.classList.add('show');
+        modalElement.style.zIndex = '1060';
+        modalElement.style.paddingTop = '80px';
+        
+        // Crear backdrop
+        const backdrop = document.createElement('div');
+        backdrop.className = 'modal-backdrop show';
+        backdrop.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1055;
+        `;
+        document.body.appendChild(backdrop);
+        
+        // Función para cerrar modal
+        function closeModal() {
+            modalElement.style.display = 'none';
+            modalElement.classList.remove('show');
+            if (backdrop && backdrop.parentNode) {
+                backdrop.parentNode.removeChild(backdrop);
+            }
+        }
+        
+        // Event listeners para cerrar
+        backdrop.addEventListener('click', closeModal);
+        
+        const closeButtons = modalElement.querySelectorAll('[data-bs-dismiss="modal"], .btn-close');
+        closeButtons.forEach(btn => {
+            btn.addEventListener('click', closeModal);
+        });
+        
+        // Cerrar con Escape
+        function handleEscape(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+                document.removeEventListener('keydown', handleEscape);
+            }
+        }
+        document.addEventListener('keydown', handleEscape);
+    }
+    
+    // Event listener para el botón trigger
+    triggerButton.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        showModal();
+    });
+});
+</script>

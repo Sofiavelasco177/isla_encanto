@@ -1,0 +1,146 @@
+{% extends 'dashboard/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Reservas de Restaurante</h2>
+    <div class="d-flex align-items-center gap-2">
+      <form method="get" class="d-flex align-items-center gap-2">
+        <select name="estado" class="form-select">
+          <option value="">Todos</option>
+          {% for st in ['Pendiente','Confirmada','Atendida','Cancelada'] %}
+            <option value="{{ st }}" {% if estado==st %}selected{% endif %}>{{ st }}</option>
+          {% endfor %}
+        </select>
+        <button class="btn btn-outline-primary">Filtrar</button>
+      </form>
+      <div class="btn-group ms-3" role="group" aria-label="Vista">
+        <button type="button" class="btn btn-light btn-sm res-view" data-view="cards"><i class="bi bi-grid-3x3-gap me-1"></i>Tarjetas</button>
+        <button type="button" class="btn btn-outline-light btn-sm res-view" data-view="table"><i class="bi bi-table me-1"></i>Tabla</button>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .res-grid{display:grid;grid-template-columns:1fr;gap:14px}
+    @media(min-width:768px){.res-grid{grid-template-columns:repeat(2,1fr)}}
+    @media(min-width:1200px){.res-grid{grid-template-columns:repeat(3,1fr)}}
+    .res-card{background:#fff;border:1px solid #eef2f7;border-radius:16px;box-shadow:0 8px 24px rgba(0,0,0,.06);padding:12px}
+    .res-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+    .chip{border-radius:999px;padding:4px 10px;font-size:.75rem;font-weight:600;display:inline-block}
+    .chip-st{background:#eef2ff;color:#3b82f6}
+    .meta{display:grid;grid-template-columns:repeat(2,1fr);gap:6px 14px;color:#4b5563}
+    .meta .label{font-size:.8rem;color:#9ca3af}
+    .actions{display:flex;gap:8px;justify-content:end;margin-top:8px}
+    .hidden{display:none!important}
+  </style>
+
+  <!-- Cards view -->
+  <div id="res-view-cards" class="res-grid">
+    {% for r in reservas %}
+    <div class="res-card">
+      <div class="res-top">
+        <div class="fw-semibold">Ticket {{ r.ticket_numero }}</div>
+        <span class="chip chip-st">{{ r.estado }}</span>
+      </div>
+      <div class="meta">
+        <div><div class="label">Fecha</div>{{ r.creado_en.strftime('%Y-%m-%d %H:%M') if r.creado_en else '' }}</div>
+        <div><div class="label">Cupo</div>{{ r.cupo_personas }}</div>
+        <div><div class="label">Cliente</div>{{ r.nombre_cliente or '—' }}</div>
+        <div><div class="label">Teléfono</div>{{ r.telefono_cliente or '—' }}</div>
+        <div><div class="label">Total</div>${{ '{:,.0f}'.format(r.total or 0) }} COP</div>
+        <div><div class="label">Ticket PDF</div>
+          {% if r.file_ticket %}<a href="{{ media_url(r.file_ticket) }}" target="_blank">Descargar</a>{% else %}—{% endif %}
+        </div>
+      </div>
+      <div class="actions">
+        <form method="post" action="{{ url_for('admin.restaurante_reserva_estado', reserva_id=r.id) }}" class="d-flex gap-2 align-items-center">
+          <select name="estado" class="form-select form-select-sm">
+            {% for st in ['Pendiente','Confirmada','Atendida','Cancelada'] %}
+              <option value="{{ st }}" {% if r.estado==st %}selected{% endif %}>{{ st }}</option>
+            {% endfor %}
+          </select>
+          <button class="btn btn-primary btn-sm">Guardar</button>
+        </form>
+      </div>
+    </div>
+    {% else %}
+      <div class="text-muted">No hay reservas</div>
+    {% endfor %}
+  </div>
+
+  <!-- Table view -->
+  <div id="res-view-table" class="card hidden">
+    <div class="table-responsive">
+      <table class="table align-middle mb-0">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Ticket</th>
+            <th>Cliente</th>
+            <th>Teléfono</th>
+            <th>Cupo</th>
+            <th>Estado</th>
+            <th>Total</th>
+            <th>Ticket PDF</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in reservas %}
+          <tr>
+            <td>{{ r.creado_en.strftime('%Y-%m-%d %H:%M') if r.creado_en else '' }}</td>
+            <td>{{ r.ticket_numero }}</td>
+            <td>{{ r.nombre_cliente or '—' }}</td>
+            <td>{{ r.telefono_cliente or '—' }}</td>
+            <td>{{ r.cupo_personas }}</td>
+            <td><span class="badge bg-secondary">{{ r.estado }}</span></td>
+            <td>${{ '{:,.0f}'.format(r.total or 0) }} COP</td>
+            <td>
+              {% if r.file_ticket %}
+                <a href="{{ media_url(r.file_ticket) }}" target="_blank">Descargar</a>
+              {% else %}
+                —
+              {% endif %}
+            </td>
+            <td>
+              <form method="post" action="{{ url_for('admin.restaurante_reserva_estado', reserva_id=r.id) }}" class="d-flex gap-2">
+                <select name="estado" class="form-select form-select-sm">
+                  {% for st in ['Pendiente','Confirmada','Atendida','Cancelada'] %}
+                    <option value="{{ st }}" {% if r.estado==st %}selected{% endif %}>{{ st }}</option>
+                  {% endfor %}
+                </select>
+                <button class="btn btn-primary btn-sm">Guardar</button>
+              </form>
+            </td>
+          </tr>
+          {% else %}
+            <tr><td colspan="9" class="text-center py-4 text-muted">No hay reservas</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    // Toggle cards/table for reservas
+    (function(){
+      const cards = document.getElementById('res-view-cards');
+      const table = document.getElementById('res-view-table');
+      const btns = document.querySelectorAll('.res-view');
+      function setV(v){
+        const isCards = v==='cards';
+        cards.classList.toggle('hidden', !isCards);
+        table.classList.toggle('hidden', isCards);
+        btns.forEach(b=>{
+          b.classList.toggle('btn-light', b.dataset.view===v);
+          b.classList.toggle('btn-outline-light', b.dataset.view!==v);
+        });
+        try{localStorage.setItem('restResView', v);}catch(e){}
+      }
+      btns.forEach(b=>b.addEventListener('click',()=>setV(b.dataset.view)));
+      try{ setV(localStorage.getItem('restResView')||'table'); }catch(e){ setV('table'); }
+    })();
+  </script>
+</div>
+{% endblock %}

@@ -1,0 +1,159 @@
+
+{% extends 'home/base.html' %}
+
+{% block title %}Recuperar Contraseña{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper container">
+    <div class="auth-card">
+        <!-- Panel izquierdo (branding) -->
+        <div class="auth-left">
+            <!-- Animated ocean waves background -->
+            <div class="waves-container" aria-hidden="true">
+                <div class="wave"></div>
+                <div class="wave"></div>
+                <div class="wave"></div>
+            </div>
+            <div class="auth-left-content text-center">
+                <img src="{{ url_for('static', filename='img/logo.jpg') }}" alt="Hotel Isla Encanto" class="login-logo mb-3">
+                <h2 class="brand-title">Isla Encanto</h2>
+                <p class="brand-sub">¿Olvidaste tu contraseña? No te preocupes, te ayudamos a recuperar el acceso a tu cuenta de manera segura.</p>
+            </div>
+        </div>
+
+        <!-- Panel derecho (formulario) -->
+        <div class="auth-right">
+            <h2 class="auth-title">Recuperar Contraseña</h2>
+            <p class="auth-sub">Ingresa tu correo electrónico y te enviaremos un enlace para restablecer tu contraseña</p>
+
+            <!-- Mensajes Flash -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ 'danger' if category == 'error' else 'success' if category == 'success' else 'info' }} alert-dismissible fade show mb-3" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endwith %}
+
+            <!-- Formulario de recuperación -->
+            <form method="POST" action="{{ url_for('recuperar.recuperar_contrasena') }}">
+                <div class="mb-4">
+                    <label class="form-label text-muted">Correo electrónico</label>
+                    <input type="email" class="form-control" name="correo" placeholder="Ingresa tu correo electrónico" required>
+                </div>
+                
+                <button type="submit" class="btn btn-main w-100 py-2 mb-3">
+                    <i class="fas fa-paper-plane me-2"></i>Enviar enlace de recuperación
+                </button>
+                
+                <hr class="my-4">
+                
+                <div class="text-center small">
+                    <span class="text-muted">¿Recordaste tu contraseña?</span>
+                    <a href="{{ url_for('login') }}" class="btn btn-link p-0 align-baseline">Volver al login</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .auth-wrapper{ max-width: 960px; margin: 48px auto; }
+    .auth-card{
+        display: flex; overflow: hidden; border-radius: 20px;
+        box-shadow: 0 14px 36px rgba(13,33,48,.10);
+        background: #fff; border: 1px solid rgba(0,0,0,.04);
+    }
+    .auth-left{ 
+        flex: 1 1 46%; padding: 32px 28px; color:#fff;
+        background: linear-gradient(180deg, #1e3a8a 0%, #2563eb 55%, #0ea5e9 100%);
+        position: relative; min-height: 420px;
+        /* Slide-in animation (left panel) */
+        animation: slideInLeft 1.6s cubic-bezier(.2,.8,.2,1) both;
+    }
+    .auth-left-content{ 
+        position: relative; z-index: 5; display:flex; flex-direction:column; 
+        align-items:center; justify-content:center; height:100%; text-align:center; 
+    }
+    .login-logo{ 
+        width:80px; height:80px; border-radius:12px; object-fit:cover; 
+        box-shadow:0 6px 16px rgba(0,0,0,.18); background:#fff; padding:4px; 
+    }
+    .waves-container{
+        position:absolute; inset:0; overflow:hidden; z-index:1; pointer-events:none;
+    }
+    .wave{ 
+        position:absolute; left:0; bottom:-10%; width:200%; height:120%; opacity:.35; 
+        animation: wave 20s cubic-bezier(.36,.45,.63,.53) infinite; 
+    }
+    .wave:nth-child(2){ 
+        opacity:.28; 
+        animation: wave 25s cubic-bezier(.36,.45,.63,.53) -0.125s infinite, swell 7s ease -1.25s infinite; 
+    }
+    .wave:nth-child(3){ 
+        opacity:.20; 
+        animation: wave 30s cubic-bezier(.36,.45,.63,.53) -0.25s infinite, swell 10s ease -2.5s infinite; 
+    }
+    .wave::before{
+        content:""; position:absolute; left:0; right:0; bottom:0; top:0;
+        background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none"><path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" fill="rgba(255,255,255,0.35)"/></svg>') repeat-x;
+        background-size: 50% 100%;
+    }
+    .auth-left::after{
+        content:""; position:absolute; right:-60px; top:-60px; width:200px; height:200px; border-radius: 50%;
+        background: radial-gradient(circle at center, rgba(255,255,255,.18), transparent 60%);
+        filter: blur(1px);
+    }
+    .brand-title{ 
+        font-family:'Playfair Display', serif; font-weight:800; font-size:1.9rem; margin-bottom: 6px; 
+    }
+    .brand-sub{ 
+        opacity:.95; max-width: 420px; margin-left:auto; margin-right:auto; 
+        font-family:'Playfair Display', serif; 
+    }
+
+    .auth-right{ 
+        flex: 1 1 54%; background:#fff; padding: 32px 28px; 
+        /* Slide-in animation (right panel) */
+        animation: slideInRight 1.6s cubic-bezier(.2,.8,.2,1) .08s both; 
+    }
+    .auth-title{ font-weight:800; font-size: 1.7rem; color:#2a2a2a; }
+    .auth-sub{ color:#7a7a7a; margin-bottom: 14px; }
+    .auth-right .form-control{ background:#faf9f7; border:1.5px solid #e6ded5; }
+    .auth-right .form-control:focus{ background:#fff; border-color:#2563eb; box-shadow:0 0 6px rgba(37,99,235,.35); }
+    .auth-right .btn-main{ background:#2563eb; }
+    .auth-right .btn-main:hover{ background:#1d4ed8; }
+    
+    /* Keyframes for slide-in and waves animations */
+    @keyframes slideInLeft {
+        0% { opacity: 0; transform: translateX(-24px) scale(.98); }
+        100% { opacity: 1; transform: translateX(0) scale(1); }
+    }
+    @keyframes slideInRight {
+        0% { opacity: 0; transform: translateX(24px) scale(.98); }
+        100% { opacity: 1; transform: translateX(0) scale(1); }
+    }
+    @keyframes wave { 
+        0%{ transform: translateX(0); } 
+        50%{ transform: translateX(-25%); } 
+        100%{ transform: translateX(-50%); } 
+    }
+    @keyframes swell { 
+        0%,100%{ transform: translateY(0); } 
+        50%{ transform: translateY(-12px); } 
+    }
+    
+    /* Respect reduced motion preferences */
+    @media (prefers-reduced-motion: reduce) {
+        .auth-left, .auth-right { animation: none !important; }
+        .wave { animation: none !important; }
+    }
+    
+    @media (max-width: 991.98px){
+        .auth-card{ flex-direction: column; }
+        .auth-left{ min-height: 240px; }
+    }
+</style>
+
+{% endblock %}

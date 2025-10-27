@@ -1,0 +1,82 @@
+version: '3.8'
+
+services:
+  # Servicio web para desarrollo
+  web-dev:
+    build: .
+    ports:
+      - "5001:5000"
+    environment:
+      - FLASK_ENV=development
+      - FLASK_APP=run.py
+    volumes:
+      - .:/app  # Bind mount para desarrollo (hot reload)
+      - ./instance:/app/instance
+    restart: unless-stopped
+    command: python run.py  # Servidor de desarrollo
+    profiles:
+      - dev
+      - development
+
+  # Servicio web para producción (SQLite)
+  web:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=production
+      - FLASK_APP=run.py
+    volumes:
+      - db-data:/app/instance  # Volumen nombrado para producción (SQLite)
+      - uploads-data:/app/static/img/uploads  # Persistir imágenes subidas
+    restart: unless-stopped
+    networks:
+      - resort-network
+    profiles:
+      - prod
+      - production
+
+  # Servicio web para producción con MySQL
+  web-mysql:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=production
+      - FLASK_APP=run.py
+      - DATABASE_URL=mysql+pymysql://root:password@db:3306/islaencanto
+    depends_on:
+      - db
+    volumes:
+      - ./instance:/app/instance
+      - uploads-data:/app/static/img/uploads  # Persistir imágenes subidas
+    restart: unless-stopped
+    networks:
+      - resort-network
+    profiles:
+      - mysql
+
+  # Servicio MySQL
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: islaencanto
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    restart: unless-stopped
+    networks:
+      - resort-network
+    profiles:
+      - mysql
+
+networks:
+  resort-network:
+    driver: bridge
+
+volumes:
+  db-data:    # Para SQLite en producción
+  mysql-data: # Para MySQL
+  uploads-data: # Para imágenes subidas

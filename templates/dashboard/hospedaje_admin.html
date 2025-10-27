@@ -1,0 +1,278 @@
+{% extends 'dashboard/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+	<div class="d-flex justify-content-between align-items-center mb-2">
+		<h2>Hospedaje — Administración</h2>
+		<form class="d-flex align-items-center" method="get" action="{{ url_for('admin.hospedaje_index') }}" style="gap:8px">
+			<input class="form-control" type="search" name="q" value="{{ q or '' }}" placeholder="Buscar por nombre, plan o estado">
+			<button class="btn btn-outline-light" type="submit">Buscar</button>
+			{% if q %}
+				<a class="btn btn-link text-decoration-none" href="{{ url_for('admin.hospedaje_index') }}">Quitar filtro</a>
+			{% endif %}
+			<div class="ms-3 btn-group" role="group" aria-label="Vista">
+				<button type="button" class="btn btn-light btn-sm view-btn" data-view="cards"><i class="bi bi-grid-3x3-gap me-1"></i>Tarjetas</button>
+				<button type="button" class="btn btn-outline-light btn-sm view-btn" data-view="table"><i class="bi bi-table me-1"></i>Tabla</button>
+			</div>
+		</form>
+	</div>
+	<div class="inv-accent mb-4"></div>
+
+	<style>
+	/* Cards like the screenshot: clean, soft shadow, chips and action bar */
+	.admin-card-grid{display:grid;grid-template-columns:1fr;gap:14px}
+	@media(min-width:768px){.admin-card-grid{grid-template-columns:repeat(2,1fr)}}
+	@media(min-width:1200px){.admin-card-grid{grid-template-columns:repeat(3,1fr)}}
+	.admin-room-card{background:#fff;border:1px solid #eef2f7;border-radius:16px;box-shadow:0 8px 24px rgba(0,0,0,.06);padding:12px 12px 8px}
+	.admin-room-card .top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+	.chip{border-radius:999px;padding:4px 10px;font-size:.8rem;font-weight:600;display:inline-block}
+	.chip-state{background:#eefbef;color:#146c43}
+	.chip-maint{background:#fff7db;color:#946200}
+	.chip-busy{background:#ffe6e6;color:#8b1d1d}
+	.chip-plan{background:#eef2ff;color:#3b82f6}
+	.meta{display:grid;grid-template-columns:repeat(2,1fr);gap:6px 14px;color:#4b5563;margin-top:8px}
+	.meta .label{font-size:.8rem;color:#9ca3af}
+	.card-actions{display:flex;gap:8px;justify-content:center;margin-top:10px}
+	.card-actions .btn{border-radius:10px}
+	.hidden{display:none !important}
+	</style>
+
+	<!-- Formulario: Agregar Nueva Habitación (arriba) -->
+	<div class="form-card mb-5">
+		<div class="form-header">
+			<h3> Agregar Nueva Habitación</h3>
+			<div class="sub">Complete los detalles de la habitación</div>
+		</div>
+		<div class="form-body">
+			<form action="{{ url_for('admin.hospedaje_nueva') }}" method="POST" enctype="multipart/form-data" class="row g-3">
+				<div class="col-md-6">
+					<label for="nombre" class="form-label">Nombre de la Habitación <span class="text-danger">*</span></label>
+					<input type="text" class="form-control" id="nombre" name="nombre" placeholder="Ej: Suite Deluxe" required>
+				</div>
+				<div class="col-md-3">
+					<label for="plan" class="form-label">Plan</label>
+					<select class="form-select" id="plan" name="plan">
+						<option value="">Sin plan</option>
+						<option value="Oro">Oro</option>
+						<option value="Plata">Plata</option>
+						<option value="Bronce">Bronce</option>
+					</select>
+				</div>
+				<div class="col-md-3">
+					<label for="numero" class="form-label">Número</label>
+					<input type="number" class="form-control" id="numero" name="numero" min="1" placeholder="01">
+				</div>
+				<div class="col-md-6">
+					<label for="precio" class="form-label">Precio por Noche <span class="text-danger">*</span></label>
+					<input type="number" class="form-control" id="precio" name="precio" min="0" step="0.01" placeholder="$150.000" required>
+				</div>
+				<div class="col-md-6">
+					<label for="cupo_personas" class="form-label">Capacidad de Personas <span class="text-danger">*</span></label>
+					<input type="number" class="form-control" id="cupo_personas" name="cupo_personas" min="1" placeholder="2" required>
+				</div>
+				<div class="col-md-6">
+					<label for="estado" class="form-label">Estado <span class="text-danger">*</span></label>
+					<select class="form-select" id="estado" name="estado" required>
+						<option value="Disponible">Disponible</option>
+						<option value="Mantenimiento">Mantenimiento</option>
+						<option value="Ocupada">Ocupada</option>
+					</select>
+				</div>
+				<div class="col-12">
+					<label class="form-label">Imagen de la Habitación</label>
+					<div class="upload-dropzone">
+						<button type="button" class="btn btn-cta-gradient" onclick="document.getElementById('imagen').click()">
+							<i class="bi bi-folder2-open me-1"></i> Seleccionar Archivo
+						</button>
+						<span class="ms-2 text-muted small" id="file-name">Ningún archivo seleccionado</span>
+						<input type="file" class="form-control mt-2 d-none" id="imagen" name="imagen" accept="image/*">
+					</div>
+				</div>
+				<div class="col-12">
+					<label for="descripcion" class="form-label">Descripción</label>
+					<textarea class="form-control" id="descripcion" name="descripcion" rows="4" placeholder="Describa las características de la habitación, comodidades, servicios incluidos, etc."></textarea>
+				</div>
+				<div class="col-12">
+					<label for="caracteristicas" class="form-label">Características (JSON o texto)</label>
+					<textarea class="form-control" id="caracteristicas" name="caracteristicas" rows="4" placeholder='Ej: {"area_interior": ["Cama King"], "servicios": ["Room service 24h"]}'></textarea>
+				</div>
+				<div class="col-12">
+					<label for="model3d" class="form-label">URL del modelo 3D (GLB, USDZ, etc)</label>
+					<input type="url" class="form-control" id="model3d" name="model3d" placeholder="https://.../modelo.glb">
+					<small class="text-muted">Opcional. Si se proporciona, se mostrará el modelado 3D en la vista pública.</small>
+				</div>
+				<div class="col-12 d-flex justify-content-center">
+					<button type="submit" class="btn btn-form-primary w-100" style="max-width: 520px;">
+						<i class="bi bi-check2-square me-2"></i> Agregar Habitación
+					</button>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<!-- Vistas: Tarjetas y Tabla -->
+	<div id="habitaciones-admin">
+		{% if plan_order and habitaciones_por_plan %}
+			<!-- Tarjetas (default) -->
+			<div id="view-cards" class="admin-card-grid">
+				{% for plan in plan_order %}
+					{% set group = habitaciones_por_plan[plan] %}
+					{% for h in group %}
+					<div class="admin-room-card">
+						<div class="top">
+							<div class="fw-semibold">{{ h.nombre }} {% if h.numero %}<span class="text-muted">#{{ '%02d'|format(h.numero) }}</span>{% endif %}</div>
+							<div>
+								<span class="chip chip-plan">{{ h.plan or 'General' }}</span>
+								<span class="chip {{ 'chip-state' if h.estado=='Disponible' else ('chip-maint' if h.estado=='Mantenimiento' else 'chip-busy') }}">{{ h.estado }}</span>
+							</div>
+						</div>
+						<div class="meta">
+							<div><div class="label">Cupo</div>{{ h.cupo_personas }}</div>
+							<div><div class="label">Precio</div>${{ '{:,.0f}'.format(h.precio) }} COP</div>
+							<div><div class="label">Modelo 3D</div>{{ 'Sí' if h.model3d else '—' }}</div>
+							<div><div class="label">Descripción</div>{{ (h.descripcion[:30] ~ '…') if h.descripcion and (h.descripcion|length>30) else (h.descripcion or '—') }}</div>
+						</div>
+						<div class="card-actions">
+							<button type="button" class="btn btn-outline-secondary btn-sm" title="Ver detalles" data-bs-toggle="modal" data-bs-target="#modalHabitacion{{ h.id }}"><i class="bi bi-eye"></i></button>
+							<button type="button" class="btn btn-outline-secondary btn-sm" title="Historial" data-bs-toggle="modal" data-bs-target="#calHabitacion{{ h.id }}"><i class="bi bi-clock-history"></i></button>
+							<a href="{{ url_for('admin.inventario_view') }}?room_id={{ h.id }}" class="btn btn-outline-secondary btn-sm" title="Inventario"><i class="bi bi-clipboard-check"></i></a>
+							<a href="{{ url_for('admin.hospedaje_editar', habitacion_id=h.id) }}" class="btn btn-outline-primary btn-sm" title="Editar"><i class="bi bi-pencil"></i></a>
+							<form action="{{ url_for('admin.hospedaje_eliminar', habitacion_id=h.id) }}" method="POST" style="display:inline;">
+								<button type="submit" class="btn btn-outline-danger btn-sm" title="Eliminar" onclick="return confirm('¿Seguro que deseas eliminar esta habitación?')"><i class="bi bi-trash"></i></button>
+							</form>
+						</div>
+					</div>
+					{% endfor %}
+				{% endfor %}
+			</div>
+
+			<!-- Tabla -->
+			<div id="view-table" class="hidden">
+				<div class="table-responsive">
+				<table class="table table-sm align-middle">
+					<thead class="table-light">
+						<tr>
+							<th>Nombre</th><th>Número</th><th>Plan</th><th>Estado</th><th>Cupo</th><th>Precio</th><th class="text-end">Acciones</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for plan in plan_order %}
+							{% set group = habitaciones_por_plan[plan] %}
+							{% for h in group %}
+							<tr>
+								<td>{{ h.nombre }}</td>
+								<td>{% if h.numero %}#{{ '%02d'|format(h.numero) }}{% else %}—{% endif %}</td>
+								<td>{{ h.plan or '—' }}</td>
+								<td>{{ h.estado }}</td>
+								<td>{{ h.cupo_personas }}</td>
+								<td>${{ '{:,.0f}'.format(h.precio) }} COP</td>
+								<td class="text-end">
+									<button type="button" class="btn btn-outline-secondary btn-sm" title="Ver" data-bs-toggle="modal" data-bs-target="#modalHabitacion{{ h.id }}"><i class="bi bi-eye"></i></button>
+									<button type="button" class="btn btn-outline-secondary btn-sm" title="Historial" data-bs-toggle="modal" data-bs-target="#calHabitacion{{ h.id }}"><i class="bi bi-clock-history"></i></button>
+									<a href="{{ url_for('admin.inventario_view') }}?room_id={{ h.id }}" class="btn btn-outline-secondary btn-sm" title="Inventario"><i class="bi bi-clipboard-check"></i></a>
+									<a href="{{ url_for('admin.hospedaje_editar', habitacion_id=h.id) }}" class="btn btn-outline-primary btn-sm" title="Editar"><i class="bi bi-pencil"></i></a>
+									<form action="{{ url_for('admin.hospedaje_eliminar', habitacion_id=h.id) }}" method="POST" style="display:inline;">
+										<button type="submit" class="btn btn-outline-danger btn-sm" title="Eliminar" onclick="return confirm('¿Seguro que deseas eliminar esta habitación?')"><i class="bi bi-trash"></i></button>
+									</form>
+								</td>
+							</tr>
+							{% endfor %}
+						{% endfor %}
+					</tbody>
+				</table>
+				</div>
+			</div>
+		{% else %}
+			<div class="text-muted">No hay habitaciones registradas.</div>
+		{% endif %}
+	</div>
+
+	<script>
+	// Toggle between cards and table views
+	document.addEventListener('DOMContentLoaded', () => {
+	  const cards = document.getElementById('view-cards');
+	  const table = document.getElementById('view-table');
+	  const btns = document.querySelectorAll('.view-btn');
+	  const setView = (v) => {
+	    const isCards = v === 'cards';
+	    cards.classList.toggle('hidden', !isCards);
+	    table.classList.toggle('hidden', isCards);
+	    btns.forEach(b => b.classList.toggle('btn-light', b.dataset.view===v));
+	    btns.forEach(b => b.classList.toggle('btn-outline-light', b.dataset.view!==v));
+	    try { localStorage.setItem('adminRoomsView', v); } catch(e){}
+	  };
+	  btns.forEach(b => b.addEventListener('click', () => setView(b.dataset.view)));
+	  try { setView(localStorage.getItem('adminRoomsView') || 'cards'); } catch(e){ setView('cards'); }
+	});
+	</script>
+
+	<!-- Modales renderizados fuera del grid (usar misma agrupación) -->
+	{% if plan_order and habitaciones_por_plan %}
+		{% for plan in plan_order %}
+			{% set group = habitaciones_por_plan[plan] %}
+			{% for h in group %}
+		<div class="modal fade" id="modalHabitacion{{ h.id }}" tabindex="-1" aria-labelledby="modalHabitacionLabel{{ h.id }}" aria-hidden="true">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="modalHabitacionLabel{{ h.id }}">{{ h.nombre }}</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+					</div>
+					<div class="modal-body">
+						{% set model_url = h.model3d %}
+						{% if model_url %}
+						<model-viewer src="{{ model_url }}" alt="{{ h.nombre }}" camera-controls touch-action="pan-y" ar style="width:100%;height:320px;background:#f8fafc;border-bottom:1px solid #eef2f7" class="mb-3"></model-viewer>
+						{% else %}
+						{% set imgpath2 = h.imagen if h.imagen else 'img/default.jpg' %}
+						<img src="{{ url_for('static', filename=imgpath2) }}" class="img-fluid mb-3" alt="{{ h.nombre }}" onerror="this.onerror=null;this.src='{{ url_for('static', filename='img/default.jpg') }}'">
+						{% endif %}
+						<p><strong>Plan:</strong> {{ h.plan or '—' }}</p>
+						<p><strong>Número:</strong> {{ h.numero or '—' }}</p>
+						<p><strong>Cupo:</strong> {{ h.cupo_personas }}</p>
+						<p><strong>Precio:</strong> ${{ '{:,.0f}'.format(h.precio) }} COP</p>
+						<p><strong>Estado:</strong> {{ h.estado }}</p>
+						{% if h.descripcion %}
+							<p><strong>Descripción:</strong> {{ h.descripcion }}</p>
+						{% else %}
+							<p><strong>Descripción:</strong> <span class="text-muted">Sin descripción</span></p>
+						{% endif %}
+						{% if h.caracteristicas %}
+							<hr>
+							<pre class="mt-2" style="white-space: pre-wrap;">{{ h.caracteristicas }}</pre>
+						{% endif %}
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Modal calendario (admin) -->
+		<div class="modal fade hab-calendar-modal" id="calHabitacion{{ h.id }}" tabindex="-1" aria-hidden="true" data-url="{{ url_for('hospedaje_usuario.calendario_habitacion', habitacion_id=h.id) }}" data-year="{{ current_year }}">
+			<div class="modal-dialog modal-xl">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">Cronograma anual — {{ h.nombre }}{% if h.numero %} #{{ '%02d'|format(h.numero) }}{% endif %}</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+					</div>
+					<div class="modal-body">
+						<div class="d-flex justify-content-between align-items-center mb-2 calendar-controls">
+							<button class="btn btn-light btn-sm cal-prev" type="button"><i class="bi bi-arrow-left"></i></button>
+							<div class="fw-semibold">Año <span class="calendar-year"></span></div>
+							<button class="btn btn-light btn-sm cal-next" type="button"><i class="bi bi-arrow-right"></i></button>
+						</div>
+						<div class="calendar-legend small mb-2">
+							<span class="legend-box bg-available"></span> Disponible
+							<span class="legend-box bg-occupied ms-3"></span> Ocupada
+							<span class="legend-box bg-maintenance ms-3"></span> Mantenimiento
+						</div>
+						<div class="calendar-body"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+			{% endfor %}
+		{% endfor %}
+	{% endif %}
+
+{% endblock %}

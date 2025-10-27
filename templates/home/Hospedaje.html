@@ -1,0 +1,216 @@
+{% extends 'home/base.html' %}
+
+{% block title %}{% endblock %}
+
+{% block content %}
+{# Bootstrap CSS/JS ya se incluye en home/base.html #}
+
+<style>
+/* Filter pill */
+.filter-pill{background:#ffffffcc;border-radius:999px;padding:6px 12px;display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(0,0,0,0.06);box-shadow:0 2px 6px rgba(0,0,0,0.04)}
+.filter-pill svg{width:18px;height:18px;display:block;fill:#0d6efd}
+.filter-pill .pill-text{font-size:14px;color:#212529;font-weight:500}
+@media(max-width:576px){.filter-pill .pill-text{display:none}}
+
+/* Two-column grid inspired by Restaurante cards */
+.rooms-grid-2{display:grid;grid-template-columns:1fr;gap:32px}
+@media(min-width:768px){.rooms-grid-2{grid-template-columns:repeat(2,1fr)}}
+
+/* Card style similar to .menu-card */
+.room-card-v2{border-radius:20px;background:#fff;box-shadow:0 20px 50px rgba(59,130,246,0.15);padding:18px 20px 16px;transition:transform .25s ease,box-shadow .25s ease;position:relative}
+.room-card-v2:hover{transform:translateY(-6px);box-shadow:0 26px 60px rgba(59,130,246,0.22)}
+.room-media{position:relative;height:300px;border-radius:14px;overflow:hidden;background:linear-gradient(180deg,#e6f1ff 10%,#5c97ff 95%);display:flex;align-items:end}
+.room-media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.room-media model-viewer{width:100%;height:100%;background:#f8fafc}
+.room-tag{position:relative;margin:0 0 14px 14px;letter-spacing:2px;font-weight:800;font-size:.72rem;color:#fff;padding:10px 14px;border-radius:999px;background:rgba(255,255,255,0.2);backdrop-filter:blur(6px);text-transform:uppercase}
+.room-index-title{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;padding:14px 6px 8px;border-bottom:1px solid #eef2ff}
+.room-index{font-size:2.2rem;font-weight:700;line-height:1;color:#9bb8ff}
+.room-title{font-size:1.2rem;font-weight:700;color:#374151;margin:0}
+.room-meta{display:flex;align-items:center;justify-content:space-between;padding:10px 6px 6px;color:#6b7280;font-size:.95rem}
+.room-price{font-weight:800;color:#0b7285}
+.room-btn{background:linear-gradient(135deg,#60a5fa,#3b82f6);color:#fff;border:none;padding:10px 18px;border-radius:999px;font-weight:800;font-size:.9rem;letter-spacing:.5px;box-shadow:0 10px 24px rgba(59,130,246,.35);transition:transform .15s ease,filter .2s ease,box-shadow .2s ease}
+.room-btn:hover{filter:brightness(1.05);transform:translateY(-1px);box-shadow:0 16px 28px rgba(37,99,235,.45)}
+.plan-title{font-size:1.25rem;font-weight:800;margin-top:1.5rem}
+</style>
+
+
+<br>
+
+<!--Habitaciones Section-->
+<div class="container mt-5">
+
+    <!-- Filters -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <div class="dropdown">
+                <button class="filter-pill dropdown-toggle" type="button" id="filterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <!-- filter SVG icon -->
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                        <path d="M10 18h4v-2h-4v2zm-7-8v2h18v-2H3zm3-6v2h12V4H6z" />
+                    </svg>
+                    <span class="pill-text">Filtrar</span>
+                </button>
+
+                <div class="dropdown-menu p-3" aria-labelledby="filterDropdown">
+                    <form id="filter-form" class="row g-2 align-items-center" onsubmit="return false;">
+                        <div class="col-12">
+                            <label for="filter-plan" class="form-label">Plan</label>
+                            <select id="filter-plan" class="form-select">
+                                <option value="">Todos</option>
+                                <option value="Oro">Oro</option>
+                                <option value="Plata">Plata</option>
+                                <option value="Bronce">Bronce</option>
+                                <option value="Sin plan">Sin plan</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label for="filter-guests" class="form-label">Personas</label>
+                            <input id="filter-guests" type="number" class="form-control" min="1" placeholder="Cualquiera">
+                        </div>
+                        <div class="col-12">
+                            <label for="filter-price-order" class="form-label">Ordenar por precio</label>
+                            <select id="filter-price-order" class="form-select">
+                                <option value="">Sin orden</option>
+                                <option value="asc">Menor a mayor</option>
+                                <option value="desc">Mayor a menor</option>
+                            </select>
+                        </div>
+                        <div class="col-12 d-flex justify-content-end mt-2">
+                            <button type="button" class="btn btn-primary me-2" onclick="applyFiltersAndClose()">Aplicar</button>
+                            <button type="button" class="btn btn-link" onclick="resetFilters()">Limpiar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        {% set _plans = plan_order if plan_order is defined else [] %}
+        {% if _plans %}
+        {% for plan in _plans %}
+        {% set group = habitaciones_por_plan[plan] %}
+                <div class="rooms-grid-2" id="habitaciones-publicas-{{ (plan)|lower }}">
+            {% for h in group %}
+                        <article class="room-card-v2 room-block" data-plan="{{ (h.plan or '')|trim or 'Sin plan' }}" data-capacity="{{ h.cupo_personas }}" data-price="{{ h.precio }}">
+                                            <div class="room-media">
+                                {% set model_url = h.model3d or h.model_url or h.modelo3d %}
+                                {% if model_url %}
+                                    <model-viewer src="{{ model_url }}" alt="{{ h.nombre }}" camera-controls touch-action="pan-y" ar></model-viewer>
+                                {% else %}
+                                    <img loading="lazy" src="{{ url_for('static', filename=h.imagen if h.imagen else 'img/default.jpg') }}" alt="{{ h.nombre }}">
+                                {% endif %}
+                            </div>
+                            <div class="room-index-title">
+                                <div class="room-index">{{ '%02d'|format(loop.index) }}</div>
+                                <h3 class="room-title mb-0">{{ h.nombre }}</h3>
+                            </div>
+                            <div class="room-meta">
+                                <div>Cupo: {{ h.cupo_personas }}</div>
+                                <div class="room-price">Desde ${{ '{:,.0f}'.format(h.precio) }} COP</div>
+                            </div>
+                            <div class="d-flex justify-content-end pt-1">
+                                <a class="room-btn" href="{{ url_for('registro.login', next=url_for('hospedaje_usuario.hospedaje_usuario')) }}">Reservar</a>
+                            </div>
+                        </article>
+            {% endfor %}
+        </div>
+        {% endfor %}
+        {% else %}
+        {# Fallback por si no pasamos plan_order: usar listado plano sin títulos #}
+                <div class="rooms-grid-2" id="habitaciones-publicas">
+            {% for h in habitaciones %}
+                        <article class="room-card-v2 room-block" data-plan="{{ (h.plan or '')|trim or 'Sin plan' }}" data-capacity="{{ h.cupo_personas }}" data-price="{{ h.precio }}">
+                                            <div class="room-media">
+                                {% set model_url = h.model3d or h.model_url or h.modelo3d %}
+                                {% if model_url %}
+                                    <model-viewer src="{{ model_url }}" alt="{{ h.nombre }}" camera-controls touch-action="pan-y" ar></model-viewer>
+                                {% else %}
+                                    <img loading="lazy" src="{{ url_for('static', filename=h.imagen if h.imagen else 'img/default.jpg') }}" alt="{{ h.nombre }}">
+                                {% endif %}
+                            </div>
+                            <div class="room-index-title">
+                                <div class="room-index">{{ '%02d'|format(loop.index) }}</div>
+                                <h3 class="room-title mb-0">{{ h.nombre }}</h3>
+                            </div>
+                            <div class="room-meta">
+                                <div>Cupo: {{ h.cupo_personas }}</div>
+                                <div class="room-price">Desde ${{ '{:,.0f}'.format(h.precio) }} COP</div>
+                            </div>
+                            <div class="d-flex justify-content-end pt-1">
+                                <a class="room-btn" href="{{ url_for('registro.login', next=url_for('hospedaje_usuario.hospedaje_usuario')) }}">Reservar</a>
+                            </div>
+                        </article>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+    <!-- Removed static demo cards to keep only DB-driven rooms -->
+
+</div>
+
+{# Modal de login se define en home/base.html (id=loginModal) #}
+
+
+<script>
+function toggleDescription(roomId) {
+    const description = document.getElementById(roomId);
+    description.style.display = description.style.display === 'none' ? 'block' : 'none';
+}
+// mostrarModal() ya está disponible desde home/base.html
+
+// Ocultar/mostrar sin reescribir el contenedor (evita romper títulos/estructura)
+function filterRooms() {
+    const plan = document.getElementById('filter-plan').value;
+    const guests = parseInt(document.getElementById('filter-guests').value) || 0;
+    const priceOrder = document.getElementById('filter-price-order').value;
+    const blocks = Array.from(document.querySelectorAll('.room-block'));
+
+    // Filtrar visibilidad
+    blocks.forEach(b => {
+        const p = b.getAttribute('data-plan') || '';
+        const cap = parseInt(b.getAttribute('data-capacity') || '0');
+        let visible = true;
+        if (plan && plan !== '' && p !== plan) visible = false;
+        if (guests > 0 && cap < guests) visible = false;
+        b.style.display = visible ? '' : 'none';
+    });
+
+    // Orden por precio (dentro de cada sección), manteniendo estructura
+    if (priceOrder) {
+        const sections = document.querySelectorAll('[id^="habitaciones-publicas-"]');
+        sections.forEach(sec => {
+            const kids = Array.from(sec.querySelectorAll(':scope > .room-block'));
+            kids.sort((a,b) => {
+                const pa = parseFloat(a.getAttribute('data-price')||'0');
+                const pb = parseFloat(b.getAttribute('data-price')||'0');
+                return priceOrder === 'asc' ? pa - pb : pb - pa;
+            });
+            kids.forEach(k => sec.appendChild(k));
+        });
+    }
+}
+
+function resetFilters() {
+    document.getElementById('filter-plan').value = '';
+    document.getElementById('filter-guests').value = '';
+    document.getElementById('filter-price-order').value = '';
+    document.querySelectorAll('.room-block').forEach(b => b.style.display = '');
+}
+
+function applyFiltersAndClose() {
+    // Aplicar filtros y ordenar
+    filterRooms();
+
+    // close bootstrap dropdown
+    const dropdownEl = document.getElementById('filterDropdown');
+    if (dropdownEl) {
+        const dd = bootstrap.Dropdown.getInstance(dropdownEl) || new bootstrap.Dropdown(dropdownEl);
+        dd.hide();
+    }
+}
+
+// Ejecutar una vez para estado inicial consistente
+document.addEventListener('DOMContentLoaded', filterRooms);
+</script>
+
+{% endblock %}

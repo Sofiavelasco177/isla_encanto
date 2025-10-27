@@ -1,0 +1,239 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}Restaurante - Admin{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+
+    <!-- Encabezado -->
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <h2>Restaurante - Administración</h2>
+    </div>
+    <div class="inv-accent mb-4"></div>
+
+        <!-- Lista de platos: toggle Tarjetas/Tabla -->
+        <div class="d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">📋 Platos registrados</h4>
+            <div class="btn-group" role="group" aria-label="Vista">
+                <button type="button" class="btn btn-light btn-sm platos-view" data-view="cards"><i class="bi bi-grid-3x3-gap me-1"></i>Tarjetas</button>
+                <button type="button" class="btn btn-outline-light btn-sm platos-view" data-view="table"><i class="bi bi-table me-1"></i>Tabla</button>
+            </div>
+        </div>
+        <div class="inv-accent mb-2"></div>
+
+        <style>
+            .platos-grid{display:grid;grid-template-columns:1fr;gap:14px}
+            @media(min-width:768px){.platos-grid{grid-template-columns:repeat(2,1fr)}}
+            @media(min-width:1200px){.platos-grid{grid-template-columns:repeat(3,1fr)}}
+            .plato-card{background:#fff;border:1px solid #eef2f7;border-radius:16px;box-shadow:0 8px 24px rgba(0,0,0,.06);overflow:hidden}
+            .plato-img{width:100%;height:180px;object-fit:cover}
+            .plato-body{padding:12px}
+            .plato-head{display:flex;justify-content:space-between;align-items:center}
+            .chip{border-radius:999px;padding:4px 10px;font-size:.75rem;font-weight:600;display:inline-block}
+            .chip-cat{background:#eef2ff;color:#3b82f6}
+            .plato-actions{display:flex;gap:8px;justify-content:end;margin-top:10px}
+            .hidden{display:none!important}
+        </style>
+
+        <!-- Cards -->
+        <div id="platos-view-cards" class="platos-grid">
+            {% for p in platos %}
+            <div class="plato-card">
+                {% if p.imagen %}
+                    <img class="plato-img" src="{{ media_url(p.imagen) }}" alt="{{ p.nombre }}" onerror="this.style.display='none'">
+                {% else %}
+                    <div class="plato-img" style="display:flex;align-items:center;justify-content:center;background:#f5f7fb;color:#9aa6c7">Sin imagen</div>
+                {% endif %}
+                <div class="plato-body">
+                    <div class="plato-head">
+                        <div class="fw-semibold">{{ p.nombre }}</div>
+                        <span class="chip chip-cat">{{ p.categoria }}</span>
+                    </div>
+                    <div class="text-muted small">{{ p.descripcion or '—' }}</div>
+                    <div class="d-flex justify-content-between align-items-center mt-2">
+                        <div class="fw-bold">${{ '%.2f'|format(p.precio) }}</div>
+                        <div>
+                            <form method="post" action="{{ url_for('admin.admin_restaurante_orden', pid=p.id) }}" class="d-inline">
+                                <input type="hidden" name="dir" value="up"><button class="btn btn-sm btn-outline-light" title="Subir">▲</button>
+                            </form>
+                            <form method="post" action="{{ url_for('admin.admin_restaurante_orden', pid=p.id) }}" class="d-inline">
+                                <input type="hidden" name="dir" value="down"><button class="btn btn-sm btn-outline-light" title="Bajar">▼</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="plato-actions">
+                        <a href="{{ url_for('admin.admin_restaurante_editar', plato_id=p.id) }}" class="btn btn-sm btn-primary">Editar</a>
+                        <form method="POST" action="{{ url_for('admin.admin_restaurante_eliminar', plato_id=p.id) }}" style="display:inline-block;">
+                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar este plato?');">Eliminar</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+                <div class="text-muted">No hay platos registrados.</div>
+            {% endfor %}
+        </div>
+
+        <!-- Tabla -->
+        <div id="platos-view-table" class="p-3 rounded-4 form-dark-box form-dark hidden">
+                <table class="table mb-0" style="--bs-table-bg: #0f172a; --bs-table-color: #e5e7eb;">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Imagen</th>
+                <th>Plato</th>
+                <th>Descripción</th>
+                <th>Categoria</th>
+                <th>Precio</th>
+                <th>Orden</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for p in platos %}
+            <tr>
+                <td>{{ p.id }}</td>
+                <td style="width:96px">
+                    {% if p.imagen %}
+                        <img src="{{ media_url(p.imagen) }}" alt="{{ p.nombre }}" style="width:80px;height:60px;object-fit:cover;border-radius:6px" onerror="this.style.display='none'">
+                    {% else %}
+                        <span class="text-muted small">sin imagen</span>
+                    {% endif %}
+                </td>
+                <td>{{ p.nombre }}</td>
+                <td class="text-truncate" style="max-width: 260px;">{{ p.descripcion }}</td>
+                <td>{{ p.categoria }}</td>
+                <td>${{ '%.2f'|format(p.precio) }}</td>
+                <td>
+                    <form method="post" action="{{ url_for('admin.admin_restaurante_orden', pid=p.id) }}" class="d-inline">
+                        <input type="hidden" name="dir" value="up">
+                        <button class="btn btn-sm btn-outline-light">▲</button>
+                    </form>
+                    <form method="post" action="{{ url_for('admin.admin_restaurante_orden', pid=p.id) }}" class="d-inline">
+                        <input type="hidden" name="dir" value="down">
+                        <button class="btn btn-sm btn-outline-light">▼</button>
+                    </form>
+                </td>
+                <td class="text-end">
+                    <a href="{{ url_for('admin.admin_restaurante_editar', plato_id=p.id) }}" class="btn btn-sm btn-primary me-2">Editar</a>
+                    <form method="POST" action="{{ url_for('admin.admin_restaurante_eliminar', plato_id=p.id) }}" style="display:inline-block;">
+                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar este plato?');">Eliminar</button>
+                    </form>
+                </td>
+            </tr>
+        {% else %}
+            <tr><td colspan="8" class="text-center text-muted">No hay platos registrados.</td></tr>
+        {% endfor %}
+        </tbody>
+        </table>
+    </div>
+
+    <hr class="my-4">
+
+    <!-- Formulario Nuevo Plato -->
+    <h4>➕ Crear nuevo plato</h4>
+    <div class="inv-accent mb-2"></div>
+    <form method="POST" action="{{ url_for('admin.admin_restaurante_nuevo') }}" class="mt-3 p-3 rounded-4 form-dark-box form-dark" enctype="multipart/form-data">
+        <div class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label">Nombre</label>
+                <input class="form-control" name="nombre" required>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Categoria</label>
+                <select class="form-select" name="categoria">
+                    <option>Entradas</option>
+                    <option>Principales</option>
+                    <option>Postres</option>
+                    <option>Bebidas</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Precio</label>
+                <input class="form-control" name="precio" type="number" step="0.01" required>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Imagen del plato</label>
+                <input class="form-control" type="file" name="imagen" accept="image/*">
+            </div>
+            <div class="col-12">
+                <label class="form-label">Descripción</label>
+                <input class="form-control" name="descripcion">
+            </div>
+            <div class="col-12">
+                <label class="form-label">Icono (opcional, se mostrará si no hay imagen)</label>
+                <input class="form-control" name="icono" placeholder="🥗, 🍤, etc.">
+            </div>
+        </div>
+        <button class="btn btn-success mt-3" type="submit">Crear</button>
+    </form>
+
+    <hr class="my-4">
+
+    <!-- Formulario Editar Plato -->
+    {% if plato %}
+    <h4>✏️ Editar plato</h4>
+    <div class="inv-accent mb-2"></div>
+    <form method="POST" action="{{ url_for('admin.admin_restaurante_editar', plato_id=plato.id) }}" class="mt-3 p-3 rounded-4 form-dark-box form-dark" enctype="multipart/form-data">
+        <div class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label">Nombre</label>
+                <input class="form-control" name="nombre" value="{{ plato.nombre }}" required>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Categoria</label>
+                <select class="form-select" name="categoria">
+                    {% for cat in ['Entradas','Principales','Postres','Bebidas'] %}
+                        <option value="{{cat}}" {{ 'selected' if plato.categoria==cat else '' }}>{{cat}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Precio</label>
+                <input class="form-control" name="precio" type="number" step="0.01" value="{{ plato.precio }}" required>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Imagen del plato</label>
+                <input class="form-control" type="file" name="imagen" accept="image/*">
+                {% if plato.imagen %}
+                    <div class="mt-2">
+                        <img src="{{ media_url(plato.imagen) }}" alt="prev" style="width:120px;height:90px;object-fit:cover;border-radius:6px">
+                    </div>
+                {% endif %}
+            </div>
+            <div class="col-12">
+                <label class="form-label">Descripción</label>
+                <input class="form-control" name="descripcion" value="{{ plato.descripcion }}">
+            </div>
+            <div class="col-12">
+                <label class="form-label">Icono (opcional)</label>
+                <input class="form-control" name="icono" value="{{ plato.icono }}" placeholder="🥗, etc.">
+            </div>
+        </div>
+        <button class="btn btn-primary mt-3" type="submit">Guardar</button>
+    </form>
+    {% endif %}
+
+</div>
+{% endblock %}
+
+<script>
+    // Toggle cards/table for platos
+    (function(){
+        const cards = document.getElementById('platos-view-cards');
+        const table = document.getElementById('platos-view-table');
+        const btns = document.querySelectorAll('.platos-view');
+        function setV(v){
+            const isCards = v==='cards';
+            cards.classList.toggle('hidden', !isCards);
+            table.classList.toggle('hidden', isCards);
+            btns.forEach(b=>{
+                b.classList.toggle('btn-light', b.dataset.view===v);
+                b.classList.toggle('btn-outline-light', b.dataset.view!==v);
+            });
+            try{localStorage.setItem('platosListView', v);}catch(e){}
+        }
+        btns.forEach(b=>b.addEventListener('click',()=>setV(b.dataset.view)));
+        try{ setV(localStorage.getItem('platosListView')||'table'); }catch(e){ setV('table'); }
+    })();
+</script>

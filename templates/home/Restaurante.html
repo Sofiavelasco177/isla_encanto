@@ -1,0 +1,241 @@
+{% extends 'home/base.html' %}
+
+{% block title %}{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+  
+
+  <div class="menu-grid">
+    <!-- 1 -->
+    <article class="menu-card">
+      <div class="menu-media">
+        <img src="{{ url_for('static', filename='img/r2.jpg') }}" alt="Frescura del Mar">
+        <span class="menu-tag">Especialidad marina</span>
+      </div>
+      <div class="menu-index-title">
+        <div class="menu-index">01</div>
+        <h3 class="menu-title mb-0">Frescura del Mar</h3>
+      </div>
+      <div class="menu-meta">
+        <div class="label">Valoración</div>
+        <div class="menu-stars">★ ★ ★ ★ ☆</div>
+      </div>
+      <div class="d-flex justify-content-end pt-1">
+          <a class="menu-btn" href="{{ url_for('registro.login', next=url_for('main.restaurante_usuario')) }}">Descubrir menú</a>
+      </div>
+    </article>
+
+    <!-- 2 -->
+    <article class="menu-card">
+      <div class="menu-media">
+        <img src="{{ url_for('static', filename='img/r3.jpg') }}" alt="Sabor Caribeño">
+        <span class="menu-tag">Sazón del Caribe</span>
+      </div>
+      <div class="menu-index-title">
+        <div class="menu-index">02</div>
+        <h3 class="menu-title mb-0">Sabor Caribeño</h3>
+      </div>
+      <div class="menu-meta">
+        <div class="label">Valoración</div>
+        <div class="menu-stars">★ ★ ★ ★ ☆</div>
+      </div>
+      <div class="d-flex justify-content-end pt-1">
+          <a class="menu-btn" href="{{ url_for('registro.login', next=url_for('main.restaurante_usuario')) }}">Descubrir menú</a>
+      </div>
+    </article>
+
+    <!-- 3 -->
+    <article class="menu-card">
+      <div class="menu-media">
+        <img src="{{ url_for('static', filename='img/r4.jpg') }}" alt="Exquisito al Paladar">
+        <span class="menu-tag">Selección gourmet</span>
+      </div>
+      <div class="menu-index-title">
+        <div class="menu-index">03</div>
+        <h3 class="menu-title mb-0">Exquisito al Paladar</h3>
+      </div>
+      <div class="menu-meta">
+        <div class="label">Valoración</div>
+        <div class="menu-stars">★ ★ ★ ★ ☆</div>
+      </div>
+      <div class="d-flex justify-content-end pt-1">
+          <a class="menu-btn" href="{{ url_for('registro.login', next=url_for('main.restaurante_usuario')) }}">Descubrir menú</a>
+      </div>
+    </article>
+
+    <!-- 4 -->
+    <article class="menu-card">
+      <div class="menu-media">
+        <img src="{{ url_for('static', filename='img/r5.jpg') }}" alt="Cóctel Caribeño">
+        <span class="menu-tag">Bebida tropical</span>
+      </div>
+      <div class="menu-index-title">
+        <div class="menu-index">04</div>
+        <h3 class="menu-title mb-0">Cóctel Caribeño</h3>
+      </div>
+      <div class="menu-meta">
+        <div class="label">Valoración</div>
+        <div class="menu-stars">★ ★ ★ ★ ☆</div>
+      </div>
+      <div class="d-flex justify-content-end pt-1">
+          <a class="menu-btn" href="{{ url_for('registro.login', next=url_for('main.restaurante_usuario')) }}">Descubrir menú</a>
+      </div>
+    </article>
+
+    <!-- 5 -->
+    <article class="menu-card">
+      <div class="menu-media">
+        <img src="{{ url_for('static', filename='img/r6.jpg') }}" alt="Filete de Salmón con Vegetales">
+        <span class="menu-tag">Mar & tierra</span>
+      </div>
+      <div class="menu-index-title">
+        <div class="menu-index">05</div>
+        <h3 class="menu-title mb-0">Filete de Salmón con Vegetales</h3>
+      </div>
+      <div class="menu-meta">
+        <div class="label">Valoración</div>
+        <div class="menu-stars">★ ★ ★ ★ ☆</div>
+      </div>
+      <div class="d-flex justify-content-end pt-1">
+          <a class="menu-btn" href="{{ url_for('registro.login', next=url_for('main.restaurante_usuario')) }}">Descubrir menú</a>
+      </div>
+    </article>
+
+    <!-- 6 -->
+    <article class="menu-card">
+      <div class="menu-media">
+        <img src="{{ url_for('static', filename='img/r7.jpg') }}" alt="Pan de Coco con Relleno de Mariscos">
+        <span class="menu-tag">Tradición local</span>
+      </div>
+      <div class="menu-index-title">
+        <div class="menu-index">06</div>
+        <h3 class="menu-title mb-0">Pan de Coco con Relleno de Mariscos</h3>
+      </div>
+      <div class="menu-meta">
+        <div class="label">Valoración</div>
+        <div class="menu-stars">★ ★ ★ ★ ☆</div>
+      </div>
+      <div class="d-flex justify-content-end pt-1">
+          <a class="menu-btn" href="{{ url_for('registro.login', next=url_for('main.restaurante_usuario')) }}">Descubrir menú</a>
+      </div>
+    </article>
+
+    <!-- 7 -->
+    <article class="menu-card">
+      <div class="menu-media">
+        <img src="{{ url_for('static', filename='img/r8.jpg') }}" alt="Filete de Pescado con Vegetales y Camarones en Salsa">
+        <span class="menu-tag">Favorito</span>
+      </div>
+      <div class="menu-index-title">
+        <div class="menu-index">07</div>
+        <h3 class="menu-title mb-0">Pescado, Vegetales y Camarones</h3>
+      </div>
+      <div class="menu-meta">
+        <div class="label">Valoración</div>
+        <div class="menu-stars">★ ★ ★ ★ ☆</div>
+      </div>
+      <div class="d-flex justify-content-end pt-1">
+          <a class="menu-btn" href="{{ url_for('registro.login', next=url_for('main.restaurante_usuario')) }}">Descubrir menú</a>
+      </div>
+    </article>
+
+    <!-- 8 -->
+    <article class="menu-card">
+      <div class="menu-media">
+        <img src="{{ url_for('static', filename='img/r10.jpg') }}" alt="Cóctel Azul Tropical">
+        <span class="menu-tag">Bebida tropical</span>
+      </div>
+      <div class="menu-index-title">
+        <div class="menu-index">08</div>
+        <h3 class="menu-title mb-0">Cóctel Azul Tropical</h3>
+      </div>
+      <div class="menu-meta">
+        <div class="label">Valoración</div>
+        <div class="menu-stars">★ ★ ★ ★ ☆</div>
+      </div>
+      <div class="d-flex justify-content-end pt-1">
+          <a class="menu-btn" href="{{ url_for('registro.login', next=url_for('main.restaurante_usuario')) }}">Descubrir menú</a>
+      </div>
+    </article>
+
+    <!-- 9 -->
+    <article class="menu-card">
+      <div class="menu-media">
+        <img src="{{ url_for('static', filename='img/r11.jpg') }}" alt="Cóctel Frutal Caribeño">
+        <span class="menu-tag">Bebida tropical</span>
+      </div>
+      <div class="menu-index-title">
+        <div class="menu-index">09</div>
+        <h3 class="menu-title mb-0">Cóctel Frutal Caribeño</h3>
+      </div>
+      <div class="menu-meta">
+        <div class="label">Valoración</div>
+        <div class="menu-stars">★ ★ ★ ★ ☆</div>
+      </div>
+      <div class="d-flex justify-content-end pt-1">
+          <a class="menu-btn" href="{{ url_for('registro.login', next=url_for('main.restaurante_usuario')) }}">Descubrir menú</a>
+      </div>
+    </article>
+
+    <!-- 10 -->
+    <article class="menu-card">
+      <div class="menu-media">
+        <img src="{{ url_for('static', filename='img/r12.jpg') }}" alt="Salmón a la Plancha con Salsa Verde">
+        <span class="menu-tag">Mar & tierra</span>
+      </div>
+      <div class="menu-index-title">
+        <div class="menu-index">10</div>
+        <h3 class="menu-title mb-0">Salmón a la Plancha con Salsa Verde</h3>
+      </div>
+      <div class="menu-meta">
+        <div class="label">Valoración</div>
+        <div class="menu-stars">★ ★ ★ ★ ☆</div>
+      </div>
+      <div class="d-flex justify-content-end pt-1">
+          <a class="menu-btn" href="{{ url_for('registro.login', next=url_for('main.restaurante_usuario')) }}">Descubrir menú</a>
+      </div>
+    </article>
+
+    <!-- 11 -->
+    <article class="menu-card">
+      <div class="menu-media">
+        <img src="{{ url_for('static', filename='img/r13.jpg') }}" alt="Filete de Pescado con Camarones y Vegetales">
+        <span class="menu-tag">Mar & tierra</span>
+      </div>
+      <div class="menu-index-title">
+        <div class="menu-index">11</div>
+        <h3 class="menu-title mb-0">Pescado con Camarones y Vegetales</h3>
+      </div>
+      <div class="menu-meta">
+        <div class="label">Valoración</div>
+        <div class="menu-stars">★ ★ ★ ★ ☆</div>
+      </div>
+      <div class="d-flex justify-content-end pt-1">
+          <a class="menu-btn" href="{{ url_for('registro.login', next=url_for('main.restaurante_usuario')) }}">Descubrir menú</a>
+      </div>
+    </article>
+
+    <!-- 12 -->
+    <article class="menu-card">
+      <div class="menu-media">
+        <img src="{{ url_for('static', filename='img/r14.jpg') }}" alt="Pescado Frito al Estilo Caribeño">
+        <span class="menu-tag">Clásico costeño</span>
+      </div>
+      <div class="menu-index-title">
+        <div class="menu-index">12</div>
+        <h3 class="menu-title mb-0">Pescado Frito Caribeño</h3>
+      </div>
+      <div class="menu-meta">
+        <div class="label">Valoración</div>
+        <div class="menu-stars">★ ★ ★ ★ ☆</div>
+      </div>
+      <div class="d-flex justify-content-end pt-1">
+          <a class="menu-btn" href="{{ url_for('registro.login', next=url_for('main.restaurante_usuario')) }}">Descubrir menú</a>
+      </div>
+    </article>
+  </div>
+</div>
+
+{% endblock %}

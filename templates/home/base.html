@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resort Encanto</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='Styles.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+
+</head>
+<body>
+    <!-- Animated bubble background layer -->
+    <div id="bubble-layer" class="bubble-layer"></div>
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <img src="{{ url_for('static', filename='img/logo.jpg') }}" alt="Logo" height="40">
+            <span class="ms-2 fw-bold fs-4 align-middle"> Hotel Isla Encanto</span>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+                
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="{{ url_for('home') }}">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('hospedaje') }}">Hospedaje</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('restaurantes') }}">Restaurante</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('nosotros') }}">Nosotros</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('experiencias') }}">Experiencias</a>
+                    </li>
+                </ul>
+                <div class="d-flex align-items-center ms-auto gap-2">
+                    {% if session.get('user') %}
+                        <a href="{{ url_for('perfil_usuario.perfil') }}" class="btn btn-login" title="Perfil">
+                            <i class="bi bi-person-circle fs-4"></i>
+                        </a>
+                        <a href="{{ url_for('auth.logout') }}" class="btn btn-logout" title="Cerrar sesión">
+                            <i class="bi bi-box-arrow-right fs-5"></i>
+                            <span class="d-none d-sm-inline ms-1">Cerrar sesión</span>
+                        </a>
+                    {% else %}
+                        <a href="{{ url_for('registro.login') }}" class="btn btn-login" title="Iniciar sesión">
+                            <i class="bi bi-box-arrow-right fs-4"></i>
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+        <!-- Toasts (top-right) public -->
+        <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1060">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                <div class="toast align-items-center text-bg-{{ 'warning' if category in ['warn','warning'] else ('danger' if category=='danger' else ('success' if category=='success' else 'primary')) }} border-0 mb-2" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="d-flex">
+                        <div class="toast-body">{{ message }}</div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                </div>
+                {% endfor %}
+            {% endif %}
+            {% endwith %}
+        </div>
+
+    <!-- Contenido principal -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Modal de Login reutilizable -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Inicia sesión para reservar</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Para continuar con la reserva necesitas iniciar sesión.</p>
+                </div>
+                <div class="modal-footer">
+                    <a href="{{ url_for('registro.login', next=request.path) }}" class="btn btn-primary">Ir a iniciar sesión</a>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Footer -->
+<footer class="bg-dark text-white text-center p-4 mt-auto" style="margin-top: 48px;">
+    <div class="container">
+        <p>© 2025 Hotel Isla Encanto | Todos los derechos reservados</p>
+
+        <!-- Redes sociales -->
+        <div class="d-flex justify-content-center gap-3">
+            <!-- Facebook -->
+            <a href="https://www.facebook.com/HotelIsladelEncanto" target="_blank" class="text-white">
+                <i class="bi bi-facebook" style="font-size: 1.5rem;"></i>
+            </a>
+            <!-- Instagram -->
+            <a href="https://www.instagram.com/hotelisladelencanto" target="_blank" class="text-white">
+                <i class="bi bi-instagram" style="font-size: 1.5rem;"></i>
+            </a>
+            <!-- WhatsApp -->
+            <a href="https://wa.me/573160270709" target="_blank" class="text-white">
+                <i class="bi bi-whatsapp" style="font-size: 1.5rem;"></i>
+            </a>
+            <!-- Youtube -->
+            <a href="https://www.youtube.com/@hotelisladelencanto3102" class="text-white">
+                <i class="bi bi-youtube" style="font-size: 1.5rem;"></i>
+            </a>
+        </div>
+    </div>
+</footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- model-viewer (3D) -->
+    <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+    <script src="{{ url_for('static', filename='bubbles.js') }}"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function(){
+                const toasts = document.querySelectorAll('.toast');
+                toasts.forEach(t => new bootstrap.Toast(t, { delay: 4000 }).show());
+            });
+
+            // Mostrar modal de login cuando un usuario no autenticado intenta reservar
+            window.mostrarModal = function(){
+                var el = document.getElementById('loginModal');
+                if (!el) return;
+                var modal = bootstrap.Modal.getOrCreateInstance(el);
+                modal.show();
+            }
+        </script>
+</body>
+</html>

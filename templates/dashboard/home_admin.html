@@ -1,0 +1,104 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}Inicio - Admin{% endblock %}
+
+{% block content %}
+
+<div class="container my-4">
+        {% if session.get('user') and session.get('user').get('rol') == 'admin' %}
+            <div class="form-card mb-4">
+                <div class="form-header">
+                    <h3> Crear Nueva Sección</h3>
+                    <div class="sub">Completa la información para agregar una nueva sección</div>
+                </div>
+                <div class="form-body">
+                    <form class="row g-3" action="{{ url_for('admin.home_post_create') }}" method="POST" enctype="multipart/form-data">
+                        <div class="col-12">
+                            <label class="form-label">Título</label>
+                            <input class="form-control" name="titulo" placeholder="Ingresa el título de la sección" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Imagen <span class="text-muted">(opcional)</span></label>
+                            <div class="upload-dropzone">
+                                <div class="small">Haz clic para seleccionar o arrastra una imagen</div>
+                                <div class="text-muted" style="font-size:12px;">PNG, JPG o GIF (máx. 5MB)</div>
+                                <input class="form-control mt-2" type="file" name="imagen" accept="image/*">
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Contenido</label>
+                            <textarea class="form-control" name="contenido" rows="4" placeholder="Escribe el contenido de la sección..." required></textarea>
+                        </div>
+                        <div class="col-12 d-flex justify-content-between gap-3">
+                            <button class="btn btn-cancel px-4" type="button" onclick="this.closest('form').reset()">Cancelar</button>
+                            <button class="btn btn-form-primary px-4" type="submit"><i class="bi bi-plus-lg me-1"></i> Publicar Sección</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        {% endif %}
+
+    <h4 class="mb-3">Secciones existentes</h4>
+    <div class="row g-3 g-md-4">
+        {% for p in posts %}
+        <div class="col-12">
+            <div class="card home-post-card shadow-sm">
+                <div class="row g-0 align-items-stretch">
+                    <div class="col-md-6 p-3 p-md-4 d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h5 class="card-title mb-0">{{ p.titulo }}</h5>
+                            <div class="d-flex gap-1">
+                                <form action="{{ url_for('admin.home_post_orden', post_id=p.id) }}" method="post">
+                                    <input type="hidden" name="dir" value="up">
+                                    <button type="submit" class="btn btn-sm btn-outline-secondary" title="Subir"><i class="bi bi-arrow-up"></i></button>
+                                </form>
+                                <form action="{{ url_for('admin.home_post_orden', post_id=p.id) }}" method="post">
+                                    <input type="hidden" name="dir" value="down">
+                                    <button type="submit" class="btn btn-sm btn-outline-secondary" title="Bajar"><i class="bi bi-arrow-down"></i></button>
+                                </form>
+                            </div>
+                        </div>
+                        <p class="card-text home-post-text lh-base" style="white-space:pre-wrap;">{{ p.contenido }}</p>
+                        <div class="d-flex gap-2 mt-2">
+                            <button class="btn btn-outline-primary btn-sm" data-bs-toggle="collapse" data-bs-target="#edit{{ p.id }}">Editar</button>
+                            <form action="{{ url_for('admin.home_post_delete', post_id=p.id) }}" method="post" onsubmit="return confirm('¿Eliminar esta sección?');">
+                                <button type="submit" class="btn btn-outline-danger btn-sm">Eliminar</button>
+                            </form>
+                        </div>
+                        <div class="collapse mt-3" id="edit{{ p.id }}">
+                            <form class="row g-2" method="POST" action="{{ url_for('admin.home_post_update', post_id=p.id) }}" enctype="multipart/form-data">
+                                <div class="col-12">
+                                    <label class="form-label">Título</label>
+                                    <input class="form-control" name="titulo" value="{{ p.titulo }}">
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label">Contenido</label>
+                                    <textarea class="form-control" rows="4" name="contenido">{{ p.contenido }}</textarea>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label">Imagen (opcional)</label>
+                                    <input class="form-control" type="file" name="imagen" accept="image/*">
+                                </div>
+                                <div class="col-12">
+                                    <button class="btn btn-primary btn-sm" type="submit">Guardar</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="col-md-4 p-2 p-md-2">
+                        <div class="home-post-visual">
+                            <img class="home-post-img" src="{{ media_url(p.imagen, p.id) }}" alt="{{ p.titulo }}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-12">
+            <div class="text-muted">Sin secciones aún. ¡Crea la primera!</div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}

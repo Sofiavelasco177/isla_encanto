@@ -1,0 +1,67 @@
+{% extends 'dashboard/base.html' %}
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <form action="{{ url_for('admin.hospedaje_actualizar', habitacion_id=habitacion.id) }}" method="POST" enctype="multipart/form-data" class="p-4 rounded shadow form-dark form-dark-box">
+                <h3 class="mb-2 text-center" style="color:#568ac5">Editar Habitación</h3>
+                <div class="inv-accent mb-4"></div>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label for="nombre" class="form-label">Nombre</label>
+                        <input type="text" class="form-control" id="nombre" name="nombre" value="{{ habitacion.nombre }}" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="plan" class="form-label">Plan</label>
+                        <select class="form-select" id="plan" name="plan">
+                            <option value="" {% if not habitacion.plan %}selected{% endif %}>Sin plan</option>
+                            <option value="Oro" {% if habitacion.plan == 'Oro' %}selected{% endif %}>Oro</option>
+                            <option value="Plata" {% if habitacion.plan == 'Plata' %}selected{% endif %}>Plata</option>
+                            <option value="Bronce" {% if habitacion.plan == 'Bronce' %}selected{% endif %}>Bronce</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="numero" class="form-label">Número</label>
+                        <input type="number" class="form-control" id="numero" name="numero" min="1" value="{{ habitacion.numero }}">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="precio" class="form-label">Precio</label>
+                        <input type="number" class="form-control" id="precio" name="precio" min="0" step="0.01" value="{{ habitacion.precio }}" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="cupo_personas" class="form-label">Cupo Personas</label>
+                        <input type="number" class="form-control" id="cupo_personas" name="cupo_personas" min="1" value="{{ habitacion.cupo_personas }}" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="estado" class="form-label">Estado</label>
+                        <select class="form-select" id="estado" name="estado">
+                            <option value="Disponible" {% if habitacion.estado == 'Disponible' %}selected{% endif %}>Disponible</option>
+                            <option value="Mantenimiento" {% if habitacion.estado == 'Mantenimiento' %}selected{% endif %}>Mantenimiento</option>
+                            <option value="Ocupada" {% if habitacion.estado == 'Ocupada' %}selected{% endif %}>Ocupada</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="imagen" class="form-label">Imagen</label>
+                        <input type="file" class="form-control" id="imagen" name="imagen" accept="image/*">
+                        {% if habitacion.imagen %}
+                        <img src="{{ url_for('static', filename=habitacion.imagen) }}" alt="Imagen actual" class="img-thumbnail mt-2" style="max-width: 200px;">
+                        {% endif %}
+                    </div>
+                    <div class="col-md-12">
+                        <label for="descripcion" class="form-label">Descripción</label>
+                        <textarea class="form-control" id="descripcion" name="descripcion" rows="3" required>{{ habitacion.descripcion }}</textarea>
+                    </div>
+                    <div class="col-md-12">
+                        <label for="caracteristicas" class="form-label">Características (JSON o texto)</label>
+                        <textarea class="form-control" id="caracteristicas" name="caracteristicas" rows="4">{{ habitacion.caracteristicas }}</textarea>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-center mt-4">
+                    <button type="submit" class="btn btn-main px-5">Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+python scripts/populate_habitaciones.py

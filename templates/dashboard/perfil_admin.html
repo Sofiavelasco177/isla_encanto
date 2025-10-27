@@ -1,0 +1,119 @@
+{% extends "dashboard/base.html" %}
+
+{% block content %}
+<div class="container my-4">
+	<div class="row g-4">
+		<!-- Sidebar estilo ajustes -->
+		<aside class="col-12 col-lg-4">
+			<div class="p-3 bg-white rounded-4 shadow-sm">
+				<h5 class="mb-3">Settings</h5>
+				<ul class="list-unstyled mb-0">
+					<li class="mb-2"><span class="text-muted small d-block mb-1">Cuenta</span>
+						<a class="d-flex justify-content-between align-items-center text-decoration-none" href="#">
+							<span class="text-dark">Editar perfill</span>
+							<i class="bi bi-chevron-right"></i>
+						</a>
+					</li>
+					<li class="mb-2">
+						<a class="d-flex justify-content-between align-items-center text-decoration-none" href="#">
+							<span class="text-dark">Cambiar contraseña</span>
+							<i class="bi bi-chevron-right"></i>
+						</a>
+					</li>
+					<li class="mb-2"><span class="text-muted small d-block mb-1">Notificaciones</span>
+						<div class="d-flex justify-content-between align-items-center">
+							<span class="text-dark">Notificaciones de la app</span>
+							<div class="form-check form-switch mb-0">
+								<input class="form-check-input" type="checkbox" checked disabled>
+							</div>
+						</div>
+					</li>
+				</ul>
+			</div>
+		</aside>
+
+		<!-- Formulario principal -->
+		<section class="col-12 col-lg-8">
+			<div class="p-4 rounded-4 shadow-sm form-dark-box form-dark">
+				<h4 class="mb-2">Editar perfil</h4>
+				<div class="inv-accent mb-3"></div>
+				<form action="{{ url_for('perfil_admin.update') }}" method="POST" enctype="multipart/form-data">
+					<div class="text-center mb-4">
+						<div class="position-relative d-inline-block">
+							<img src="{{ url_for('static', filename=(usuario.avatar or 'img/logo.jpg')) }}" class="rounded-circle border" alt="Avatar" style="width: 110px; height: 110px; object-fit: cover;">
+							<label class="btn btn-sm btn-light position-absolute bottom-0 end-0 border" style="line-height: 1;">
+								<i class="bi bi-camera"></i>
+								<input type="file" name="avatar" accept="image/*" hidden>
+							</label>
+						</div>
+					</div>
+
+					<div class="row g-3">
+						<div class="col-md-6">
+							<label class="form-label">Nombre de usuario</label>
+							<input type="text" class="form-control" name="usuario" value="{{ usuario.usuario }}">
+						</div>
+						<div class="col-md-6">
+							<label class="form-label">Correo electrónico</label>
+							<input type="email" class="form-control" name="correo" value="{{ usuario.correo }}">
+						</div>
+						<div class="col-md-6">
+							<label class="form-label">Teléfono</label>
+							<input type="text" class="form-control" name="telefono" value="{{ usuario.telefono or '' }}">
+						</div>
+						<div class="col-md-6">
+							<label class="form-label">Fecha de nacimiento</label>
+							<input type="date" class="form-control" name="fechaNacimiento" value="{{ usuario.fechaNacimiento }}">
+						</div>
+						<div class="col-12">
+							<label class="form-label">Dirección</label>
+							<input type="text" class="form-control" name="direccion" value="{{ usuario.direccion or '' }}">
+						</div>
+
+						<hr class="my-2">
+						<div class="col-md-6">
+							<label class="form-label">Cargo</label>
+							<input type="text" class="form-control" name="cargo" value="{{ perfil.cargo if perfil else '' }}">
+						</div>
+						<div class="col-md-6">
+							<label class="form-label">Área</label>
+							<input type="text" class="form-control" name="area" value="{{ perfil.area if perfil else '' }}">
+						</div>
+						<div class="col-md-6">
+							<label class="form-label">División</label>
+							<input type="text" class="form-control" name="division" value="{{ perfil.division if perfil else '' }}">
+						</div>
+						<div class="col-md-6">
+							<label class="form-label">Empresa</label>
+							<input type="text" class="form-control" name="empresa" value="{{ perfil.empresa if perfil else '' }}">
+						</div>
+						<div class="col-md-6">
+							<label class="form-label">Supervisor</label>
+							<input type="text" class="form-control" name="supervisor" value="{{ perfil.supervisor if perfil else '' }}">
+						</div>
+						<div class="col-md-6">
+							<label class="form-label">Suplente</label>
+							<input type="text" class="form-control" name="suplente" value="{{ perfil.suplente if perfil else '' }}">
+						</div>
+						<div class="col-md-6">
+							<label class="form-label">Tipo de contrato</label>
+							<input type="text" class="form-control" name="tipo_contrato" value="{{ perfil.tipo_contrato if perfil else '' }}">
+						</div>
+						<div class="col-md-6">
+							<label class="form-label">Fecha ingreso</label>
+							<input type="date" class="form-control" name="fecha_ingreso" value="{{ perfil.fecha_ingreso if perfil else '' }}">
+						</div>
+					</div>
+
+					<div class="d-flex gap-2 mt-4">
+						<button type="submit" class="btn btn-main">Guardar cambios</button>
+						<form action="{{ url_for('perfil_admin.delete') }}" method="POST" onsubmit="return confirm('¿Eliminar perfil?');">
+							<button type="submit" class="btn btn-outline-danger">Eliminar perfil</button>
+						</form>
+					</div>
+				</form>
+			</div>
+		</section>
+	</div>
+</div>
+{% endblock %}

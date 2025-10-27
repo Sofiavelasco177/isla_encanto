@@ -1,0 +1,233 @@
+{% extends 'dashboard/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Reservas de Hospedaje</h2>
+    <div class="d-flex align-items-center gap-2">
+      <form method="get" class="d-flex align-items-center gap-2">
+        <select name="estado" class="form-select">
+          <option value="">Todos</option>
+          {% for st in ['Pendiente','Confirmada','Pagada','Cancelada','Finalizada'] %}
+            <option value="{{ st }}" {% if estado==st %}selected{% endif %}>{{ st }}</option>
+          {% endfor %}
+        </select>
+        <button class="btn btn-outline-primary">Filtrar</button>
+      </form>
+      <div class="btn-group ms-3" role="group" aria-label="Vista">
+        <button type="button" class="btn btn-light btn-sm res-view" data-view="cards"><i class="bi bi-grid-3x3-gap me-1"></i>Tarjetas</button>
+        <button type="button" class="btn btn-outline-light btn-sm res-view" data-view="table"><i class="bi bi-table me-1"></i>Tabla</button>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .res-grid{display:grid;grid-template-columns:1fr;gap:14px}
+    @media(min-width:768px){.res-grid{grid-template-columns:repeat(2,1fr)}}
+    @media(min-width:1200px){.res-grid{grid-template-columns:repeat(3,1fr)}}
+    .res-card{background:#fff;border:1px solid #eef2f7;border-radius:16px;box-shadow:0 8px 24px rgba(0,0,0,.06);padding:12px}
+    .res-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+    .chip{border-radius:999px;padding:4px 10px;font-size:.75rem;font-weight:600;display:inline-block}
+    .chip-st{background:#eef2ff;color:#3b82f6}
+    .chip-pendiente{background:#fef3c7;color:#d97706}
+    .chip-confirmada{background:#d1fae5;color:#059669}
+    .chip-pagada{background:#dcfce7;color:#16a34a}
+    .chip-cancelada{background:#fee2e2;color:#dc2626}
+    .chip-finalizada{background:#f3f4f6;color:#6b7280}
+    .meta{display:grid;grid-template-columns:repeat(2,1fr);gap:6px 14px;color:#4b5563}
+    .meta .label{font-size:.8rem;color:#9ca3af}
+    .actions{display:flex;gap:8px;justify-content:end;margin-top:8px}
+    .hidden{display:none!important}
+  </style>
+
+  <!-- Cards view -->
+  <div id="res-view-cards" class="res-grid">
+    {% for r in reservas %}
+    <div class="res-card">
+      <div class="res-top">
+        <div class="fw-semibold">
+          {% if tickets and tickets.get(r.id) %}
+            Ticket {{ tickets[r.id].ticket_numero }}
+          {% else %}
+            Reserva #{{ r.id }}
+          {% endif %}
+        </div>
+        <span class="chip chip-{{ r.estado|lower|replace(' ','-') }}">{{ r.estado }}</span>
+      </div>
+      <div class="meta">
+        <div><div class="label">Fecha Creación</div>{{ r.creado_en.strftime('%Y-%m-%d %H:%M') if r.creado_en else '—' }}</div>
+        <div><div class="label">Check-in</div>{{ r.fecha_checkin.strftime('%Y-%m-%d') if r.fecha_checkin else '—' }}</div>
+        <div><div class="label">Check-out</div>{{ r.fecha_checkout.strftime('%Y-%m-%d') if r.fecha_checkout else '—' }}</div>
+        <div><div class="label">Huéspedes</div>{{ r.numero_huespedes or '—' }}</div>
+        <div><div class="label">Habitación</div>{{ r.habitacion.nombre if r.habitacion else '—' }}</div>
+        <div><div class="label">Precio Total</div>${{ '{:,.0f}'.format(r.precio_total) if r.precio_total else '0' }} COP</div>
+      </div>
+      {% if r.usuario %}
+      <div class="mt-2 pt-2 border-top">
+        <div class="label">Cliente</div>
+        <div class="fw-medium">{{ r.usuario.usuario }}</div>
+        {% if r.usuario.correo %}
+        <div class="text-muted small">{{ r.usuario.correo }}</div>
+        {% endif %}
+      </div>
+      {% endif %}
+      <div class="actions">
+        <button class="btn btn-sm btn-outline-primary" onclick="viewReservation({{ r.id }})">Ver</button>
+        {% if r.estado == 'Pendiente' %}
+        <button class="btn btn-sm btn-success" onclick="confirmReservation({{ r.id }})">Confirmar</button>
+        {% endif %}
+        {% if r.estado in ['Pendiente', 'Confirmada'] %}
+        <button class="btn btn-sm btn-outline-danger" onclick="cancelReservation({{ r.id }})">Cancelar</button>
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Table view -->
+  <div id="res-view-table" class="hidden">
+    <div class="table-responsive">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>ID/Ticket</th>
+            <th>Cliente</th>
+            <th>Habitación</th>
+            <th>Check-in</th>
+            <th>Check-out</th>
+            <th>Huéspedes</th>
+            <th>Total</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in reservas %}
+          <tr>
+            <td>
+              {% if tickets and tickets.get(r.id) %}
+                #{{ tickets[r.id].ticket_numero }}
+              {% else %}
+                #{{ r.id }}
+              {% endif %}
+            </td>
+            <td>
+              {% if r.usuario %}
+                {{ r.usuario.usuario }}
+                {% if r.usuario.correo %}
+                <br><small class="text-muted">{{ r.usuario.correo }}</small>
+                {% endif %}
+              {% else %}
+                —
+              {% endif %}
+            </td>
+            <td>{{ r.habitacion.nombre if r.habitacion else '—' }}</td>
+            <td>{{ r.fecha_checkin.strftime('%Y-%m-%d') if r.fecha_checkin else '—' }}</td>
+            <td>{{ r.fecha_checkout.strftime('%Y-%m-%d') if r.fecha_checkout else '—' }}</td>
+            <td>{{ r.numero_huespedes or '—' }}</td>
+            <td>${{ '{:,.0f}'.format(r.precio_total) if r.precio_total else '0' }} COP</td>
+            <td><span class="chip chip-{{ r.estado|lower|replace(' ','-') }}">{{ r.estado }}</span></td>
+            <td>
+              <div class="btn-group btn-group-sm">
+                <button class="btn btn-outline-primary" onclick="viewReservation({{ r.id }})">Ver</button>
+                {% if r.estado == 'Pendiente' %}
+                <button class="btn btn-success" onclick="confirmReservation({{ r.id }})">Confirmar</button>
+                {% endif %}
+                {% if r.estado in ['Pendiente', 'Confirmada'] %}
+                <button class="btn btn-outline-danger" onclick="cancelReservation({{ r.id }})">Cancelar</button>
+                {% endif %}
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  {% if not reservas %}
+  <div class="text-center py-5">
+    <div class="text-muted">
+      <i class="bi bi-calendar-x display-1"></i>
+      <p class="mt-3">No hay reservas de hospedaje registradas.</p>
+    </div>
+  </div>
+  {% endif %}
+
+</div>
+
+<script>
+// Toggle between cards and table view
+document.addEventListener('DOMContentLoaded', function() {
+    const viewButtons = document.querySelectorAll('.res-view');
+    const cardsView = document.getElementById('res-view-cards');
+    const tableView = document.getElementById('res-view-table');
+
+    viewButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const view = this.getAttribute('data-view');
+            
+            // Update active button
+            viewButtons.forEach(btn => {
+                btn.classList.remove('btn-light');
+                btn.classList.add('btn-outline-light');
+            });
+            this.classList.remove('btn-outline-light');
+            this.classList.add('btn-light');
+
+            // Show/hide views
+            if (view === 'cards') {
+                cardsView.classList.remove('hidden');
+                tableView.classList.add('hidden');
+            } else {
+                cardsView.classList.add('hidden');
+                tableView.classList.remove('hidden');
+            }
+        });
+    });
+});
+
+// Reservation actions
+function viewReservation(id) {
+    // Implement view reservation details
+    alert('Ver detalles de la reserva #' + id);
+}
+
+function confirmReservation(id) {
+    if (confirm('¿Confirmar esta reserva?')) {
+        // Implement confirm reservation
+        fetch(`/admin/hospedaje/reservas/${id}/confirm`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        }).then(response => {
+            if (response.ok) {
+                location.reload();
+            } else {
+                alert('Error al confirmar la reserva');
+            }
+        });
+    }
+}
+
+function cancelReservation(id) {
+    if (confirm('¿Cancelar esta reserva?')) {
+        // Implement cancel reservation
+        fetch(`/admin/hospedaje/reservas/${id}/cancel`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        }).then(response => {
+            if (response.ok) {
+                location.reload();
+            } else {
+                alert('Error al cancelar la reserva');
+            }
+        });
+    }
+}
+</script>
+
+{% endblock %}

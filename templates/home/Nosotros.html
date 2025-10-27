@@ -1,0 +1,57 @@
+{% extends 'home/base.html' %}
+
+{% block title %}Nosotros{% endblock %}
+
+{% block content %}
+<br>
+<div class="container mt-5">
+	<div class="row">
+	<div class="col-md-6">
+		<div class="nosotros-content">
+			
+			<p>Isla Encanto es un hotel ubicado en la isla de Barú, en el Archipiélago de Nuestra Señora del Rosario, a solo 60 minutos en lancha desde el Muelle La Bodeguita en Cartagena. Ofrece una experiencia exclusiva con acceso a una playa privada, piscinas al aire libre, y un restaurante que sirve platos de cocina caribeña y típica colombiana.</p>
+
+			<p>El hotel cuenta con habitaciones equipadas con aire acondicionado, TV por satélite y acceso a internet. Además, se pueden realizar actividades como snorkel y buceo, y el hotel está a solo 5 minutos en auto de Playa Isla Grande, donde se pueden disfrutar de actividades recreativas como voleibol y masajes en la playa.</p>
+
+			<p>Disfruta de un ambiente relajado, servicio atento y la belleza natural del Caribe colombiano. Ya sea que busques descanso en la playa privada, aventuras de buceo o gastronomía local, Isla Encanto ofrece una experiencia memorable.</p>
+
+			<p>
+				<a href="{{ url_for('home') }}" class="btn btn-link">Volver al inicio</a>
+			</p>
+		</div>
+    </div>
+
+		<div class="col-md-6 d-flex flex-column align-items-stretch">
+			<div style="width:100%;">
+				<iframe src="https://www.youtube.com/embed/nPA_bHw37Eg" title="Video Isla Encanto" allowfullscreen style="width:100%;height:460px;border:0;border-radius:8px;overflow:hidden;"></iframe>
+			</div>
+			<p class="small text-muted mt-2">Ver video de Isla Encanto en YouTube</p>
+		</div>
+	</div>
+</div>
+
+
+
+<!-- Contenido dinámico bajo la sección estática -->
+{% if posts %}
+<div class="container mt-4">
+	<div class="row g-3 g-md-4">
+		{% for p in posts %}
+		<div class="col-12 col-md-6">
+			<div class="card h-100">
+				{% if p.imagen %}<img class="card-img-top" src="{{ media_url(p.imagen, p.id) }}" alt="{{ p.titulo }}">{% endif %}
+				<div class="card-body nosotros-content">
+					<div class="d-flex justify-content-between align-items-start mb-2">
+						<h5 class="mb-0">{{ p.titulo }}</h5>
+						<span class="badge bg-info">{{ p.categoria|capitalize }}</span>
+					</div>
+					<p class="mb-0">{{ p.contenido }}</p>
+				</div>
+			</div>
+		</div>
+		{% endfor %}
+	</div>
+</div>
+{% endif %}
+
+{% endblock %}

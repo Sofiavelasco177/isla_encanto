@@ -1,0 +1,220 @@
+{% extends 'home/base.html' %}
+
+{% block title %}Experiencias{% endblock %}
+
+{% block content %}
+<br>
+<div class="container mt-5">
+    
+    <!-- Reviews Section -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="row">
+                <!-- Reviews Grid -->
+                {% set featured_reviews = [
+                    {'rating': 8.2, 'text': 'Excelente atención y lugar perfecto! Con todos los detalles! La comida era increíble y el personal muy amigable en todo momento!', 'author': 'Katia', 'location': 'Madrid, Spain', 'date': 'Sep 2024'},
+                    {'rating': 9.3, 'text': 'Una experiencia administrativa excepcional. El personal fue extremadamente atento y la vista del mar increíblemente hermosa', 'author': 'Mario', 'location': 'Barcelona, Spain', 'date': 'Sep 2024'},
+                    {'rating': 8.8, 'text': 'La experiencia más maravillosa desde el primer momento de llegada. Un lugar tranquilo con servicios completamente excepcionales.', 'author': 'Carlos', 'location': 'Sevilla, Spain', 'date': 'Sep 2024'},
+                    {'rating': 8.0, 'text': 'La mejor elección en Aranjuez que lugar. Desde que llegue he tenido todo especial. La comida era deliciosa y el servicio impresionante.', 'author': 'Laura', 'location': 'Almería, Spain', 'date': 'Sep 2024'},
+                    {'rating': 8.3, 'text': 'Ambiente utilizable para escapadas con platitos son buena ley que te dan mejor donde y que delir luchar hasta que mejore. Definitivamente recomendamos.', 'author': 'Roberto', 'location': 'Córdoba, Spain', 'date': 'Sep 2024'},
+                    {'rating': 8.5, 'text': 'Existen todos nuestros expectativas. El lugar es muy tranquilo y relajante. La ubicación cerca del mar es perfecta para disfrutar el amanecer y atardecer.', 'author': 'Sofia', 'location': 'Málaga, Spain', 'date': 'Sep 2024'}
+                ] %}
+                
+                {% for review in featured_reviews %}
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <span class="badge bg-dark fs-6">{{ review.rating }}</span>
+                                <div class="text-warning">
+                                    {% for i in range(5) %}
+                                        {% if i < (review.rating / 2)|round %}
+                                            ★
+                                        {% else %}
+                                            ☆
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <p class="card-text small">{{ review.text }}</p>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <div class="d-flex align-items-center">
+                                <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                    <span class="text-white fw-bold">{{ review.author[0] }}</span>
+                                </div>
+                                <div class="ms-3">
+                                    <div class="fw-bold small">{{ review.author }}</div>
+                                    <div class="text-muted small">{{ review.location }}</div>
+                                    <div class="text-muted small">{{ review.date }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+
+
+
+
+
+    {% if current_user.is_authenticated %}
+        <form method="POST" action="{{ url_for('experiencias') }}">
+            <div class="mb-3">
+                <textarea class="form-control" name="contenido" rows="3" placeholder="Comparte tu experiencia..." required></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="rating" class="form-label">Calificación</label>
+                <select name="rating" id="rating" class="form-select" style="width:120px;">
+                    <option value="5">5</option>
+                    <option value="4">4</option>
+                    <option value="3">3</option>
+                    <option value="2">2</option>
+                    <option value="1">1</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Comentar</button>
+        </form>
+    {% else %}
+        <div class="alert alert-info">
+            Para compartir una experiencia, por favor <a href="{{ url_for('registro.login', next=request.path) }}">inicia sesión</a> o crea una cuenta.
+        </div>
+    {% endif %}
+
+    <div class="mt-4">
+        {% if comentarios %}
+            {% for comentario in comentarios %}
+                {% set rating = comentario.rating|default(comentario.puntuacion|default(0)) %}
+                <div class="card mb-3">
+                    <div class="card-body d-flex align-items-start">
+                        <div class="me-3" style="width:64px;">
+                            {% if comentario.user.avatar %}
+                                <img src="{{ comentario.user.avatar }}" alt="avatar" class="rounded-circle" style="width:64px;height:64px;object-fit:cover;">
+                            {% else %}
+                                <img src="{{ url_for('static', filename='img/logo.jpg') }}" alt="avatar" class="rounded-circle" style="width:64px;height:64px;object-fit:cover;">
+                            {% endif %}
+                        </div>
+                        <div class="flex-fill">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <strong>{{ comentario.user.username }}</strong>
+                                    <div class="text-muted small">{{ comentario.created_at.strftime('%d %b %Y') if comentario.created_at is defined and comentario.created_at else '' }}</div>
+                                </div>
+                                <div>
+                                    {# estrellas #}
+                                    {% for i in range(1,6) %}
+                                        {% if i <= rating|int %}
+                                            <span style="color: #f1c40f;">★</span>
+                                        {% else %}
+                                            <span style="color: #dcdcdc;">☆</span>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            <p class="mt-2 mb-0">{{ comentario.contenido }}</p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+           
+        {% endif %}
+    </div>
+
+    
+
+    <!-- Gallery Section -->
+    <section class="mt-5 mb-5">
+        <div class="text-center mb-4">
+            <h3>Galería de Momentos</h3>
+        </div>
+        
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <div class="card mb-3">
+                    <img id="mainImage" src="{{ url_for('static', filename='img/r1.jpg') }}" class="img-fluid rounded" style="width:100%;height:480px;object-fit:cover;">
+                    <div class="mt-2 d-flex gap-2 overflow-auto p-2">
+                        {% set gallery_imgs = ['r1.jpg','r2.jpg','r3.jpg','r4.jpg','r5.jpg','r6.jpg','habitacion(1).jpg','habitacion(2).jpg','habitacion(3).jpg','e1.jpg'] %}
+                        {% for img in gallery_imgs %}
+                            <img src="{{ url_for('static', filename='img/' + img) }}" class="img-thumbnail thumb" style="width:110px;height:70px;object-fit:cover;cursor:pointer;" onclick="document.getElementById('mainImage').src=this.src;">
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="row">
+                    <div class="col-6 mb-3">
+                        <div class="card text-center p-3">
+                            <div class="mb-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-utensils text-primary" viewBox="0 0 16 16">
+                                    <path d="M1 2.5A1.5 1.5 0 0 1 2.5 1h3A1.5 1.5 0 0 1 7 2.5v6.086a1.5 1.5 0 0 1-.436 1.06l-.671.671a.5.5 0 1 1-.708-.707l.671-.671A.5.5 0 0 0 6 8.5V2.5a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5v6a.5.5 0 0 0 .146.354l.854.853a.5.5 0 0 1-.708.707L1.146 9.061A1.5 1.5 0 0 1 1 8.5V2.5zm8.5-1A1.5 1.5 0 0 0 8 2.5v5.793c0 .398.158.78.44 1.06l1.768 1.768a.5.5 0 0 0 .707-.707L9.147 8.646A.5.5 0 0 1 9 8.293V2.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-.146.354l-.854.853a.5.5 0 1 0 .708.707l.854-.853A1.5 1.5 0 0 0 14 8.5v-6A1.5 1.5 0 0 0 12.5 1h-3z"/>
+                                </svg>
+                            </div>
+                            <h6>Terraza Principal</h6>
+                            <p class="small text-muted">Disfruta de una comida</p>
+                        </div>
+                    </div>
+                    
+                    <div class="col-6 mb-3">
+                        <div class="card text-center p-3">
+                            <div class="mb-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-water text-info" viewBox="0 0 16 16">
+                                    <path d="M.036 3.314a.5.5 0 0 1 .65-.278l1.757.703a1.5 1.5 0 0 0 1.114 0l1.014-.406a2.5 2.5 0 0 1 1.857 0l1.015.406a1.5 1.5 0 0 0 1.114 0l1.014-.406a2.5 2.5 0 0 1 1.857 0l1.015.406a1.5 1.5 0 0 0 1.114 0l1.757-.703a.5.5 0 1 1 .372.928l-1.758.703a2.5 2.5 0 0 1-1.857 0l-1.014-.406a1.5 1.5 0 0 0-1.114 0l-1.015.406a2.5 2.5 0 0 1-1.857 0l-1.014-.406a1.5 1.5 0 0 0-1.114 0l-1.015.406a2.5 2.5 0 0 1-1.857 0L.314 3.964a.5.5 0 0 1-.278-.65zm0 3a.5.5 0 0 1 .65-.278l1.757.703a1.5 1.5 0 0 0 1.114 0l1.014-.406a2.5 2.5 0 0 1 1.857 0l1.015.406a1.5 1.5 0 0 0 1.114 0l1.014-.406a2.5 2.5 0 0 1 1.857 0l1.015.406a1.5 1.5 0 0 0 1.114 0l1.757-.703a.5.5 0 1 1 .372.928l-1.758.703a2.5 2.5 0 0 1-1.857 0l-1.014-.406a1.5 1.5 0 0 0-1.114 0l-1.015.406a2.5 2.5 0 0 1-1.857 0l-1.014-.406a1.5 1.5 0 0 0-1.114 0l-1.015.406a2.5 2.5 0 0 1-1.857 0L.314 6.964a.5.5 0 0 1-.278-.65zm0 3a.5.5 0 0 1 .65-.278l1.757.703a1.5 1.5 0 0 0 1.114 0l1.014-.406a2.5 2.5 0 0 1 1.857 0l1.015.406a1.5 1.5 0 0 0 1.114 0l1.014-.406a2.5 2.5 0 0 1 1.857 0l1.015.406a1.5 1.5 0 0 0 1.114 0l1.757-.703a.5.5 0 1 1 .372.928l-1.758.703a2.5 2.5 0 0 1-1.857 0l-1.014-.406a1.5 1.5 0 0 0-1.114 0l-1.015.406a2.5 2.5 0 0 1-1.857 0l-1.014-.406a1.5 1.5 0 0 0-1.114 0l-1.015.406a2.5 2.5 0 0 1-1.857 0L.314 9.964a.5.5 0 0 1-.278-.65z"/>
+                                </svg>
+                            </div>
+                            <h6>Gastronomía Selecta</h6>
+                            <p class="small text-muted">Platos de autor</p>
+                        </div>
+                    </div>
+                    
+                    <div class="col-6 mb-3">
+                        <div class="card text-center p-3">
+                            <div class="mb-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-sun text-warning" viewBox="0 0 16 16">
+                                    <path d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z"/>
+                                </svg>
+                            </div>
+                            <h6>Postres Artesanales</h6>
+                            <p class="small text-muted">Creaciones dulces únicas</p>
+                        </div>
+                    </div>
+                    
+                    <div class="col-6 mb-3">
+                        <div class="card text-center p-3">
+                            <div class="mb-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-cup-hot text-danger" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M.5 6a.5.5 0 0 0-.488.608l1.652 7.434A2.5 2.5 0 0 0 4.104 16h5.792a2.5 2.5 0 0 0 2.44-1.958l.131-.59a3 3 0 0 0 1.3-5.854l.221-.99A.5.5 0 0 0 13.5 6H.5ZM13 12.5a2.01 2.01 0 0 1-.316-.025l.867-3.898A2.001 2.001 0 0 1 13 12.5ZM2.64 13.825 1.123 7h11.754l-.81 3.654a1.5 1.5 0 0 1-1.478 1.187H4.104a1.5 1.5 0 0 1-1.464-1.216Z"/>
+                                    <path d="m4.4.8-.003.004-.014.019a4.167 4.167 0 0 0-.204.31 2.327 2.327 0 0 0-.141.267c-.026.06-.034.092-.037.103v.004a.593.593 0 0 0 .091.248c.075.133.178.272.308.445l.01.012c.118.158.26.347.37.543.112.202.212.417.254.66.037.21.031.427-.048.632-.071.18-.17.335-.254.447a3.88 3.88 0 0 1-.604.598l-.048.04c-.131.104-.248.19-.379.29a2.282 2.282 0 0 0-.522.633c-.036.06-.04.091-.042.103v.004a.593.593 0 0 0 .091.248c.075.133.178.272.308.445l.01.012c.118.158.26.347.37.543.112.202.212.417.254.66.037.21.031.427-.048.632-.07.18-.17.335-.254.447a3.88 3.88 0 0 1-.604.598l-.048.04c-.131.104-.248.19-.379.29a2.282 2.282 0 0 0-.522.633c-.036.06-.04.091-.042.103a.593.593 0 0 0 .091.248c.075.133.178.272.308.445l.01.012c.118.158.26.347.37.543.112.202.212.417.254.66.037.21.031.427-.048.632-.07.18-.17.335-.254.447a3.88 3.88 0 0 1-.604.598l-.048.04c-.131.104-.248.19-.379.29a2.282 2.282 0 0 0-.522.633c-.036.06-.04.091-.042.103a.593.593 0 0 0 .091.248c.075.133.178.272.308.445l.01.012c.118.158.26.347.37.543.112.202.212.417.254.66.037.21.031.427-.048.632-.07.18-.17.335-.254.447a3.88 3.88 0 0 1-.604.598l-.048.04c-.131.104-.248.19-.379.29a2.282 2.282 0 0 0-.522.633c-.036.06-.04.091-.042.103v.004a.593.593 0 0 0 .091.248c.075.133.178.272.308.445l.01.012c.118.158.26.347.37.543.112.202.212.417.254.66.037.21.031.427-.048.632-.071.18-.17.335-.254.447a3.88 3.88 0 0 1-.604.598l-.048.04c-.131.104-.248.19-.379.29a2.282 2.282 0 0 0-.522.633c-.036.06-.04.091-.042.103v.004a.593.593 0 0 0 .091.248c.075.133.178.272.308.445l.01.012c.118.158.26.347.37.543.112.202.212.417.254.66.037.21.031.427-.048.632-.07.18-.17.335-.254.447a3.88 3.88 0 0 1-.604.598l-.048.04c-.131.104-.248.19-.379.29a2.282 2.282 0 0 0-.522.633c-.036.06-.04.091-.042.103a.593.593 0 0 0 .091.248c.075.133.178.272.308.445l.01.012c.118.158.26.347.37.543.112.202.212.417.254.66.037.21.031.427-.048.632-.071.18-.17.335-.254.447a3.88 3.88 0 0 1-.604.598l-.048.04c-.131.104-.248.19-.379.29a2.282 2.282 0 0 0-.522.633c-.036.06-.04.091-.042.103v.004a.593.593 0 0 0 .091.248c.075.133.178.272.308.445l.01.012c.118.158.26.347.37.543.112.202.212.417.254.66.037.21.031.427-.048.632-.07.18-.17.335-.254.447a3.88 3.88 0 0 1-.604.598l-.048.04c-.131.104-.248.19-.379.29a2.282 2.282 0 0 0-.499.605c-.048.074-.048.074-.048.075A.5.5 0 0 0 4.5.8a.5.5 0 0 0-.1-.8Z"/>
+                                </svg>
+                            </div>
+                            <h6>Cocteles Premium</h6>
+                            <p class="small text-muted">Bebidas especializadas</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-3">
+                    <h5>Vive Tu Propia Experiencia</h5>
+                    <p class="text-muted small">Únete a los cientos de huéspedes que han disfrutado de momentos inolvidables con nosotros. Reserva ahora y descubre por qué somos la elección preferida.</p>
+                    <a href="{{ url_for('hospedaje') }}" class="btn btn-primary me-2">Reservar Ahora</a>
+                    <a href="#" class="btn btn-outline-secondary">Ver Menú</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+                
+            
+        </div>
+    </div>
+    </form>
+</div>
+
+{% endblock %}

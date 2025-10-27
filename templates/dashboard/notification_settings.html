@@ -1,0 +1,238 @@
+{% extends 'dashboard/base.html' %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0">⚙️ Configuración de Notificaciones</h1>
+            <p class="text-muted">Gestiona las preferencias de notificación de los usuarios</p>
+        </div>
+        <div>
+            <a href="{{ url_for('admin.notifications_panel') }}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-2"></i>Volver al Panel
+            </a>
+        </div>
+    </div>
+
+    <!-- Resumen -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="text-primary mb-2">
+                        <i class="bi bi-people" style="font-size: 2rem;"></i>
+                    </div>
+                    <h4 class="fw-bold">{{ users|length }}</h4>
+                    <p class="text-muted mb-0">Total usuarios</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="text-success mb-2">
+                        <i class="bi bi-bell-fill" style="font-size: 2rem;"></i>
+                    </div>
+                    <h4 class="fw-bold">{{ users|selectattr('notif_checkin')|list|length }}</h4>
+                    <p class="text-muted mb-0">Check-in activo</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="text-warning mb-2">
+                        <i class="bi bi-bell-fill" style="font-size: 2rem;"></i>
+                    </div>
+                    <h4 class="fw-bold">{{ users|selectattr('notif_checkout')|list|length }}</h4>
+                    <p class="text-muted mb-0">Check-out activo</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lista de usuarios -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white border-0">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">👥 Usuarios y sus Preferencias</h5>
+                <div>
+                    <button class="btn btn-sm btn-outline-success" onclick="enableAllNotifications()">
+                        <i class="bi bi-check-all me-1"></i>Activar Todas
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger" onclick="disableAllNotifications()">
+                        <i class="bi bi-x-circle me-1"></i>Desactivar Todas
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width: 50px;">#</th>
+                            <th>Usuario</th>
+                            <th>Email</th>
+                            <th>Rol</th>
+                            <th class="text-center">Check-in</th>
+                            <th class="text-center">Check-out</th>
+                            <th class="text-center">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                        <tr>
+                            <td>{{ user.idUsuario }}</td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    {% if user.avatar %}
+                                        <img src="{{ user.avatar }}" alt="Avatar" class="rounded-circle me-2" style="width: 32px; height: 32px;">
+                                    {% else %}
+                                        <div class="bg-primary rounded-circle me-2 d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                                            <i class="bi bi-person text-white"></i>
+                                        </div>
+                                    {% endif %}
+                                    <div>
+                                        <div class="fw-semibold">{{ user.usuario }}</div>
+                                        {% if user.plan_tipo %}
+                                            <small class="text-muted">Plan {{ user.plan_tipo }}</small>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                {% if user.correo %}
+                                    <i class="bi bi-envelope text-success me-1"></i>{{ user.correo }}
+                                {% else %}
+                                    <span class="text-muted">
+                                        <i class="bi bi-envelope-slash me-1"></i>Sin email
+                                    </span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if user.rol == 'admin' %}
+                                    <span class="badge bg-danger">Admin</span>
+                                {% else %}
+                                    <span class="badge bg-primary">Usuario</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-center">
+                                <form method="POST" action="{{ url_for('admin.update_user_notification_settings', user_id=user.idUsuario) }}" style="display: inline;">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="notif_checkin" 
+                                               id="checkin_{{ user.idUsuario }}" 
+                                               {{ 'checked' if user.notif_checkin else '' }}
+                                               {{ 'disabled' if not user.correo else '' }}
+                                               onchange="this.form.submit()">
+                                        <label class="form-check-label" for="checkin_{{ user.idUsuario }}"></label>
+                                    </div>
+                                    <input type="hidden" name="notif_checkout" value="{{ 'on' if user.notif_checkout else '' }}">
+                                </form>
+                            </td>
+                            <td class="text-center">
+                                <form method="POST" action="{{ url_for('admin.update_user_notification_settings', user_id=user.idUsuario) }}" style="display: inline;">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="notif_checkout" 
+                                               id="checkout_{{ user.idUsuario }}" 
+                                               {{ 'checked' if user.notif_checkout else '' }}
+                                               {{ 'disabled' if not user.correo else '' }}
+                                               onchange="this.form.submit()">
+                                        <label class="form-check-label" for="checkout_{{ user.idUsuario }}"></label>
+                                    </div>
+                                    <input type="hidden" name="notif_checkin" value="{{ 'on' if user.notif_checkin else '' }}">
+                                </form>
+                            </td>
+                            <td class="text-center">
+                                {% if user.correo %}
+                                    <div class="btn-group" role="group">
+                                        <button class="btn btn-sm btn-outline-primary" onclick="updateBothNotifications({{ user.idUsuario }}, true)" title="Activar ambas">
+                                            <i class="bi bi-check-all"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-secondary" onclick="updateBothNotifications({{ user.idUsuario }}, false)" title="Desactivar ambas">
+                                            <i class="bi bi-x-circle"></i>
+                                        </button>
+                                    </div>
+                                {% else %}
+                                    <span class="text-muted small">Sin email</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Información adicional -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="alert alert-info" role="alert">
+                <i class="bi bi-info-circle me-2"></i>
+                <strong>Nota:</strong> Los usuarios sin dirección de email no pueden recibir notificaciones. 
+                Las notificaciones solo se envían a usuarios con email válido y la configuración activada.
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function updateBothNotifications(userId, enable) {
+    // Crear un formulario temporal para enviar ambas configuraciones
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = `/admin/notifications/settings/user/${userId}`;
+    
+    if (enable) {
+        const checkinInput = document.createElement('input');
+        checkinInput.type = 'hidden';
+        checkinInput.name = 'notif_checkin';
+        checkinInput.value = 'on';
+        form.appendChild(checkinInput);
+        
+        const checkoutInput = document.createElement('input');
+        checkoutInput.type = 'hidden';
+        checkoutInput.name = 'notif_checkout';
+        checkoutInput.value = 'on';
+        form.appendChild(checkoutInput);
+    }
+    
+    document.body.appendChild(form);
+    form.submit();
+}
+
+function enableAllNotifications() {
+    if (confirm('¿Activar notificaciones para todos los usuarios con email?')) {
+        const users = {{ users|map(attribute='idUsuario')|list|tojson }};
+        users.forEach(userId => {
+            setTimeout(() => updateBothNotifications(userId, true), 100);
+        });
+    }
+}
+
+function disableAllNotifications() {
+    if (confirm('¿Desactivar todas las notificaciones para todos los usuarios?')) {
+        const users = {{ users|map(attribute='idUsuario')|list|tojson }};
+        users.forEach(userId => {
+            setTimeout(() => updateBothNotifications(userId, false), 100);
+        });
+    }
+}
+</script>
+
+<style>
+.form-check-input:disabled {
+    opacity: 0.3;
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(0,123,255,0.05);
+}
+
+.btn-group .btn {
+    border-radius: 4px !important;
+    margin: 0 1px;
+}
+</style>
+{% endblock %}

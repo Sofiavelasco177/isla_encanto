@@ -1,0 +1,520 @@
+{% extends 'usuario/base.html' %}
+
+{% block content %}
+<style>
+  /* Estilo moderno del menú del restaurante */
+  .menu-bg {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    padding: 40px 20px;
+    min-height: 100vh;
+  }
+  
+  .menu-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 24px;
+    padding: 40px;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.1);
+  }
+  
+  .menu-header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  
+  .menu-title { 
+    color: #2c3e50; 
+    font-size: 2.5rem; 
+    font-weight: 800; 
+    margin-bottom: 8px;
+  }
+  
+  .menu-subtitle {
+    color: #7f8c8d;
+    font-size: 1.1rem;
+    margin-bottom: 30px;
+  }
+  
+  .tabs { 
+    display: flex; 
+    gap: 12px; 
+    margin-bottom: 40px; 
+    flex-wrap: wrap; 
+    justify-content: center; 
+  }
+  
+  .tab {
+    padding: 12px 24px; 
+    background: #f8f9fa; 
+    border: 2px solid #e9ecef; 
+    color: #495057;
+    border-radius: 50px; 
+    cursor: pointer; 
+    font-size: 16px; 
+    font-weight: 600; 
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .tab::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    transition: left 0.5s;
+  }
+  
+  .tab:hover::before {
+    left: 100%;
+  }
+  
+  .tab:hover { 
+    background: #4f7fff; 
+    color: #fff; 
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(79, 127, 255, 0.3);
+    border-color: #4f7fff;
+  }
+  
+  .tab.active { 
+    background: #4f7fff; 
+    color: #fff; 
+    border-color: #4f7fff;
+    box-shadow: 0 8px 25px rgba(79, 127, 255, 0.3);
+  }
+
+  .category { 
+    display: none; 
+  }
+  
+  .category.active { 
+    display: block; 
+    animation: fadeInUp 0.6s ease; 
+  }
+  
+  @keyframes fadeInUp { 
+    from {
+      opacity: 0; 
+      transform: translateY(30px);
+    } 
+    to {
+      opacity: 1; 
+      transform: translateY(0);
+    } 
+  }
+
+  .cat-title { 
+    color: #2c3e50; 
+    font-size: 1.8rem; 
+    margin: 0 0 30px; 
+    padding-bottom: 15px; 
+    border-bottom: 3px solid #4f7fff; 
+    font-weight: 800;
+    position: relative;
+  }
+
+  .menu-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 24px;
+    margin-bottom: 30px;
+  }
+
+  .menu-item {
+    background: #fff;
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+    border: 1px solid #f1f3f5;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .menu-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #4f7fff, #7b68ee);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+  }
+  
+  .menu-item:hover::before {
+    transform: scaleX(1);
+  }
+  
+  .menu-item:hover { 
+    transform: translateY(-8px); 
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    border-color: #4f7fff;
+  }
+  
+  .item-image { 
+    width: 100%; 
+    height: 160px; 
+    border-radius: 16px; 
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .item-image img { 
+    width: 100%; 
+    height: 100%; 
+    object-fit: cover; 
+    border-radius: 16px; 
+  }
+  
+  .item-image .placeholder {
+    width: 80px;
+    height: 80px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .item-image .placeholder i {
+    font-size: 2rem;
+    color: rgba(255,255,255,0.8);
+  }
+  
+  .item-info {
+    flex: 1;
+    margin-bottom: 20px;
+  }
+  
+  .item-name { 
+    font-size: 1.4rem; 
+    font-weight: 700; 
+    color: #2c3e50; 
+    margin-bottom: 8px;
+    line-height: 1.3;
+  }
+  
+  .item-description { 
+    color: #6c757d; 
+    font-size: 0.95rem; 
+    line-height: 1.5;
+    margin-bottom: 16px;
+  }
+  
+  .item-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  
+  .item-price { 
+    font-size: 1.3rem; 
+    font-weight: 800; 
+    color: #4f7fff;
+  }
+  
+  .item-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  
+  .quantity-control { 
+    display: flex; 
+    align-items: center; 
+    gap: 8px;
+    background: #f8f9fa;
+    border-radius: 25px;
+    padding: 4px;
+  }
+  
+  .quantity-btn { 
+    width: 32px; 
+    height: 32px; 
+    border: none; 
+    background: #4f7fff; 
+    color: #fff; 
+    border-radius: 50%; 
+    cursor: pointer; 
+    font-size: 16px; 
+    font-weight: 600;
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    transition: all 0.2s ease;
+  }
+  
+  .quantity-btn:hover { 
+    background: #3d64cc; 
+    transform: scale(1.1);
+  }
+  
+  .quantity-input { 
+    width: 50px; 
+    text-align: center; 
+    border: none; 
+    background: transparent;
+    font-size: 16px; 
+    font-weight: 600;
+    color: #2c3e50;
+  }
+  
+  .add-btn { 
+    padding: 10px 20px; 
+    background: linear-gradient(135deg, #4f7fff 0%, #7b68ee 100%);
+    color: #fff; 
+    border: none; 
+    border-radius: 25px; 
+    cursor: pointer; 
+    font-size: 14px; 
+    font-weight: 700; 
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    box-shadow: 0 4px 15px rgba(79, 127, 255, 0.3);
+  }
+  
+  .add-btn:hover { 
+    background: linear-gradient(135deg, #3d64cc 0%, #6a5acd 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(79, 127, 255, 0.4);
+  }
+  
+  .cart-cta { 
+    display: flex; 
+    justify-content: center; 
+    margin-top: 40px; 
+  }
+  
+  .cart-cta .btn { 
+    border-radius: 50px; 
+    padding: 15px 30px; 
+    font-weight: 700;
+    font-size: 1.1rem;
+    background: linear-gradient(135deg, #4f7fff 0%, #7b68ee 100%);
+    border: none;
+    color: white;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 25px rgba(79, 127, 255, 0.3);
+  }
+  
+  .cart-cta .btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 35px rgba(79, 127, 255, 0.4);
+  }
+
+  @media (max-width: 768px) {
+    .menu-container {
+      padding: 24px;
+      border-radius: 16px;
+    }
+    
+    .menu-grid {
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    
+    .menu-item {
+      padding: 20px;
+    }
+    
+    .item-footer {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 16px;
+    }
+    
+    .item-actions {
+      justify-content: space-between;
+    }
+    
+    .tabs {
+      gap: 8px;
+    }
+    
+    .tab {
+      padding: 10px 18px;
+      font-size: 14px;
+    }
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #6c757d;
+  }
+  
+  .empty-state i {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    opacity: 0.5;
+  }
+</style>
+
+<div class="menu-bg">
+  <div class="menu-container">
+    <div class="menu-header">
+      <h1 class="menu-title">Menú del Restaurante</h1>
+      <p class="menu-subtitle">Descubre nuestros deliciosos sabores de platillos</p>
+    </div>
+
+    {% if categorias and grupos %}
+    <!-- Tabs de categorías -->
+    <div class="tabs">
+    <div class="tabs">
+      {% for c in categorias %}
+        <button class="tab {% if loop.first %}active{% endif %}" onclick="showCategory('cat-{{ c|replace(' ','-')|lower }}', event)">{{ c }}</button>
+      {% endfor %}
+    </div>
+
+    {% for c in categorias %}
+      {% set items = grupos.get(c, []) %}
+      {% if items %}
+      <div id="cat-{{ c|replace(' ','-')|lower }}" class="category {% if loop.first %}active{% endif %}">
+        <h3 class="cat-title">{{ c }}</h3>
+
+        <div class="menu-grid">
+          {% for p in items %}
+            <div class="menu-item">
+              <div class="item-image">
+                {# Muestra imagen si existiera en el modelo, si no, un placeholder #}
+                {% set img = p.imagen or p.image or p.foto %}
+                {% if img %}
+                  <img src="{{ media_url(img) }}" alt="{{ p.nombre }}" onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=&quot;placeholder&quot;><i class=&quot;bi bi-image&quot;></i></div>'">
+                {% else %}
+                  <div class="placeholder">
+                    <i class="bi bi-image"></i>
+                  </div>
+                {% endif %}
+              </div>
+              
+              <div class="item-info">
+                <div class="item-name">{{ p.nombre }}</div>
+                {% if p.descripcion %}
+                  <div class="item-description">{{ p.descripcion }}</div>
+                {% else %}
+                  <div class="item-description">Delicioso platillo preparado con ingredientes frescos y de la mejor calidad.</div>
+                {% endif %}
+              </div>
+              
+              <div class="item-footer">
+                <div class="item-price">${{ '{:,.0f}'.format(p.precio or 0) }}</div>
+                
+                <form method="post" action="{{ url_for('restaurante_cart.cart_add') }}" class="add-form" onsubmit="return onAdd(this)">
+                  <div class="item-actions">
+                    <div class="quantity-control">
+                      <button type="button" class="quantity-btn" onclick="decreaseQuantity(this)">−</button>
+                      <input type="number" class="quantity-input" name="cantidad" value="1" min="1">
+                      <button type="button" class="quantity-btn" onclick="increaseQuantity(this)">+</button>
+                    </div>
+                    <input type="hidden" name="plato_id" value="{{ p.id }}">
+                    <button type="submit" class="add-btn">Añadir</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+    {% endfor %}
+
+    <div class="cart-cta">
+      <a href="{{ url_for('restaurante_cart.view_cart') }}" class="btn">
+        <i class="bi bi-cart3 me-2"></i>Ver carrito
+      </a>
+    </div>
+
+    {% else %}
+      <div class="empty-state">
+        <i class="bi bi-house"></i>
+        <h3>No hay platos disponibles por ahora</h3>
+        <p>Pronto tendremos deliciosos platillos para ti</p>
+      </div>
+    {% endif %}
+
+  </div>
+</div>
+
+<script>
+  function showCategory(id, ev){
+    const cats = document.querySelectorAll('.category');
+    const tabs = document.querySelectorAll('.tab');
+    cats.forEach(c=> c.classList.remove('active'));
+    tabs.forEach(t=> t.classList.remove('active'));
+    const el = document.getElementById(id);
+    if(el) el.classList.add('active');
+    if(ev && ev.target) ev.target.classList.add('active');
+    // scroll a la cabecera de la categoría
+    if(el){
+      const y = el.getBoundingClientRect().top + window.scrollY - 100;
+      window.scrollTo({top:y, behavior:'smooth'});
+    }
+  }
+  
+  function increaseQuantity(btn){
+    const input = btn.parentElement.querySelector('.quantity-input');
+    input.value = parseInt(input.value||'1') + 1;
+  }
+  
+  function decreaseQuantity(btn){
+    const input = btn.parentElement.querySelector('.quantity-input');
+    const v = parseInt(input.value||'1');
+    if(v>1) input.value = v-1;
+  }
+  
+  function onAdd(form){
+    const btn = form.querySelector('.add-btn');
+    if(btn){
+      const originalText = btn.textContent;
+      btn.textContent = '✓ Añadido';
+      btn.style.background = 'linear-gradient(135deg, #28a745 0%, #20c997 100%)';
+      btn.disabled = true;
+      
+      setTimeout(()=>{ 
+        btn.textContent = originalText; 
+        btn.style.background = 'linear-gradient(135deg, #4f7fff 0%, #7b68ee 100%)';
+        btn.disabled = false;
+      }, 1500);
+    }
+    return true; // permitir submit
+  }
+
+  // Animación de entrada para los elementos del menú
+  document.addEventListener('DOMContentLoaded', function() {
+    const menuItems = document.querySelectorAll('.menu-item');
+    
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry, index) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateY(0)';
+          }, index * 100);
+        }
+      });
+    }, {
+      threshold: 0.1
+    });
+
+    menuItems.forEach(item => {
+      item.style.opacity = '0';
+      item.style.transform = 'translateY(20px)';
+      item.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+      observer.observe(item);
+    });
+  });
+</script>
+{% endblock %}

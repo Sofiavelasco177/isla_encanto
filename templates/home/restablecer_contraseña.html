@@ -1,0 +1,22 @@
+<!-- templates/home/restablecer_contraseña.html -->
+{% extends 'home/base.html' %}
+
+{% block title %}Restablecer Contraseña{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <h1>Restablecer Contraseña</h1>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+            <div class="flash-message {{ category }}">{{ message }}</div>
+        {% endfor %}
+    {% endwith %}
+    <form method="POST">
+        <label for="nueva_contrasena">Nueva Contraseña:</label>
+        <input type="password" name="nueva_contrasena" required>
+        <button type="submit">Restablecer Contraseña</button>
+    </form>
+</div>
+
+{% endblock %}

@@ -1,0 +1,1662 @@
+/* =======================
+   ESTILOS BASE/GENERALES
+   ======================= */
+body {
+    background-color: #f6fbff; /* Lighter background */
+    color: #111827; /* dark text for readability */
+    font-family: Arial, sans-serif;
+}
+
+/* Layout para vistas con sidebar (admin y futuro usuario) */
+.layout-app { min-height: 100vh; }
+.sidebar-app {
+    width: 280px;               /* más ancha/alta visualmente */
+    background: #f8fafc;
+}
+.sidebar-brand {
+    height: 88px;               /* barra superior del sidebar más alta */
+    padding: 1rem 1.25rem;
+    background: linear-gradient(90deg, #eef4ff, #ffffff);
+}
+.sidebar-logo { height: 48px; border-radius: 8px; }
+.sidebar-app .nav-link { padding: .65rem .75rem; border-radius: .5rem; color: #334155; }
+.sidebar-app .nav-link.active { background: #e2e8f0; color: #0f172a; }
+.content-app { padding: 1.25rem 1.5rem; }
+
+/* Estado colapsado (admin) */
+.layout-app.collapsed .sidebar-app { width: 84px; }
+.layout-app.collapsed .sidebar-brand { justify-content: center; }
+.layout-app.collapsed .sidebar-logo { height: 40px; }
+.layout-app.collapsed .sidebar-app .nav-link .nav-text { display: none; }
+.layout-app.collapsed .sidebar-app .nav-link i { margin-right: 0 !important; font-size: 1.1rem; }
+.layout-app.collapsed .content-app { padding-left: 1rem; }
+
+
+/* =======================
+   ESTILOS HOME
+   ======================= */
+.hero {
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #f5f2f2;
+    text-align: center;
+}
+
+/* =======================
+     ESTILOS CARDS ADMIN HABITACIONES
+     ======================= */
+.habitacion-card {
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+    transition: box-shadow 0.3s, transform 0.3s;
+    overflow: hidden;
+    position: relative;
+    width: 340px;
+    min-height: 420px;
+    max-height: 420px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    margin: 0 auto;
+}
+.habitacion-card:hover {
+    box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+    transform: translateY(-4px) scale(1.03);
+}
+.habitacion-card .card-img-top {
+    height: 180px;
+    object-fit: cover;
+    width: 100%;
+}
+.estado-label {
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 0.5em 1em;
+    border-radius: 999px;
+    display: inline-block;
+    margin-top: 0.5em;
+    animation: estadoPulse 1.2s infinite alternate;
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+.estado-disponible .estado-label {
+    background: #d4f8e8;
+    color: #1fa63b;
+    box-shadow: 0 0 8px 2px #1fa63b44;
+}
+.estado-mantenimiento .estado-label {
+    background: #fff9d4;
+    color: #e6b800;
+    box-shadow: 0 0 8px 2px #e6b80044;
+}
+.estado-ocupada .estado-label {
+    background: #ffd4d4;
+    color: #d32f2f;
+    box-shadow: 0 0 8px 2px #d32f2f44;
+}
+@keyframes estadoPulse {
+    0% { filter: brightness(1); box-shadow: 0 0 8px 2px rgba(0,0,0,0.08); }
+    100% { filter: brightness(1.15); box-shadow: 0 0 16px 4px rgba(0,0,0,0.18); }
+}
+.hero h1 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+.hero p {
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
+}
+.hero .btn {
+    margin: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+}
+.btn-tour {
+    background-color: #56C596;
+    color: #f3f0f0;
+}
+.btn-learn {
+    background-color: #255857;
+    color: #e8e5e5;
+}
+
+/* =======================
+   ESTILOS DISPONIBILIDAD
+   ======================= */
+.availability {
+    background-color: #edecec;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(10, 10, 10, 0.1);
+    margin-top: -5rem;
+    text-align: center;
+}
+.availability input, .availability select, .availability button {
+    margin: 0.5rem;
+    padding: 0.75rem;
+    font-size: 1rem;
+    border: 1px solid #e3e3ed;
+    border-radius: 5px;
+}
+.availability button {
+    background-color: #56C596;
+    color: #f2e8e8;
+    border: none;
+}
+
+/* =======================
+   ESTILOS NAVBAR (base.html)
+   ======================= */
+.navbar {
+    position: fixed; /* fijar navbar para mejor UX */
+    top: 0;
+    width: 100%;
+    background: #e6f0fb !important; /* lighter blue */
+    transition: background-color 0.3s ease;
+    z-index: 1000;
+    color: #0b1a2b; /* dark text */
+}
+.navbar.scrolled {
+    background-color: #d6e6fb;
+}
+.navbar-nav {
+    margin: 0 auto;
+}
+
+.navbar-brand {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: #111 !important;    /* Cambiado a color oscuro del navbar */
+    margin-right: 10px;
+}
+.navbar-nav .nav-link,
+.btn-login {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    color: #111 !important;    /* Cambiado a color oscuro */
+    margin-right: 15px;
+    font-weight: 500;
+    letter-spacing: 1.0px;
+}
+.navbar-nav .nav-link,
+.btn-login {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    color: rgb(22, 22, 22) !important;
+    margin-right: 15px;
+    font-weight: 500;
+    letter-spacing: 1.0px;
+}
+.navbar-nav .nav-link:hover,
+.btn-login:hover {
+    color: rgb(19, 17, 17) !important;
+    text-decoration: underline;
+}
+.btn-login {
+    margin-left: auto;
+    background: linear-gradient(135deg, #60a5fa, #3b82f6); /* softer blue */
+    border-radius: 999px;
+    padding: 8px 12px;
+    color: #fff !important;
+    font-size: 1rem;
+    font-weight: 700;
+    border: none;
+    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
+    transition: transform 0.15s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+.btn-login:hover {
+    filter: brightness(1.06);
+    transform: translateY(-1px);
+    box-shadow: 0 8px 22px rgba(29, 78, 216, 0.5);
+}
+
+/* Botón de cerrar sesión (alto contraste) */
+.btn-logout {
+    background: linear-gradient(135deg, #60a5fa, #3b82f6); /* azul */
+    color: #fff !important;
+    border: none;
+    border-radius: 999px;
+    padding: 8px 12px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
+    transition: transform 0.15s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+.btn-logout:hover {
+    filter: brightness(1.06);
+    transform: translateY(-1px);
+    box-shadow: 0 8px 22px rgba(29, 78, 216, 0.5);
+}
+
+/* Cuando se usa navbar superior, empuja el contenido hacia abajo */
+main { padding-top: 72px; }
+/* Páginas con sidebar no necesitan offset superior */
+.layout-app .content-app { padding-top: 0; }
+.user-shell .user-content { padding-top: 0; }
+
+/* =======================
+   USUARIO - SIDEBAR VERTICAL (alternativa a navbar)
+   ======================= */
+.user-shell { display: flex; min-height: 100vh; }
+.user-sidebar { width: 260px; background: #f8fafc; border-right: 1px solid #e5e7eb; }
+.user-sidebar .brand { height: 88px; padding: 1rem 1.25rem; display:flex; align-items:center; gap:.5rem; border-bottom:1px solid #e5e7eb; }
+.user-sidebar .brand img { height: 44px; border-radius: 8px; }
+.user-sidebar .nav-link { padding: .7rem 1rem; color:#334155; border-radius:.5rem; }
+.user-sidebar .nav-link.active { background:#e2e8f0; color:#0f172a; }
+.user-content { flex:1; padding: 1.25rem 1.5rem; }
+
+/* Estado colapsado (usuario) */
+.user-shell.collapsed .user-sidebar { width: 84px; }
+.user-shell.collapsed .user-sidebar .brand { justify-content: center; }
+.user-shell.collapsed .user-sidebar .brand img { height: 40px; }
+.user-shell.collapsed .user-sidebar .nav-link .nav-text { display: none; }
+.user-shell.collapsed .user-sidebar .nav-link i { margin-right: 0 !important; font-size: 1.1rem; }
+.user-shell.collapsed .user-content { padding-left: 1rem; }
+
+/* ----------------- Responsive (<= lg) para sidebars como overlay ----------------- */
+@media (max-width: 991.98px) {
+    /* Admin */
+    .sidebar-app { position: fixed; left: 0; top: 0; height: 100vh; transform: translateX(-100%); transition: transform .25s ease; z-index: 1051; }
+    .layout-app.sidebar-open .sidebar-app { transform: translateX(0); }
+    .content-app { padding: 1rem; }
+    /* Usuario */
+    .user-sidebar { position: fixed; left: 0; top: 0; height: 100vh; transform: translateX(-100%); transition: transform .25s ease; z-index: 1051; }
+    .user-shell.sidebar-open .user-sidebar { transform: translateX(0); }
+    .user-content { padding: 1rem; }
+    /* Botón hamburguesa */
+    .mobile-toggle { position: fixed; left: 12px; top: 12px; z-index: 1060; border-radius: 999px; box-shadow: 0 6px 14px rgba(0,0,0,.18); }
+}
+
+/* Backdrop para overlay */
+.sidebar-backdrop { display: none; position: fixed; inset: 0; background: rgba(15,23,42,.45); z-index: 1050; }
+.layout-app.sidebar-open .sidebar-backdrop, .user-shell.sidebar-open .sidebar-backdrop { display: block; }
+
+/* =======================
+     PERFIL USUARIO (responsivo)
+     ======================= */
+.perfil-page .avatar-img {
+        width: 84px;
+        height: 84px;
+        object-fit: cover;
+}
+@media (min-width: 768px) {
+    .perfil-page .avatar-img { width: 100px; height: 100px; }
+}
+.perfil-page .list-group-item { border-radius: 8px; }
+.perfil-page .table { font-size: 0.95rem; }
+.perfil-page .table th { white-space: nowrap; }
+.perfil-page .table td { vertical-align: middle; }
+
+/* Asegurar padding de contenedores principal bajo navbar */
+.perfil-page .rounded-4 { border-radius: 16px !important; }
+
+/* =======================
+   ESTILOS HOSPEDAJE
+   ======================= */
+.pricing-card {
+    background-color: #f0f6ff;
+    color: #0f172a;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(12, 12, 12, 0.1);
+    text-align: center;
+    padding: 2rem;
+    margin: 1rem;
+    min-height: 420px;
+    max-height: 420px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 100%;
+    width: 300px;
+    height: 450px;
+}
+.hospedaje-usuario .room-img {
+        height: 200px;
+        object-fit: cover;
+}
+.hospedaje-usuario .habitacion-card { border-radius: 12px; }
+@media (min-width: 768px) {
+    .hospedaje-usuario .room-img { height: 220px; }
+}
+.pricing-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+}
+.pricing-card h3 {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    color: #568ac5;
+}
+.pricing-card p {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+}
+.pricing-card .price {
+    font-size: 2rem;
+    font-weight: bold;
+    margin: 1rem 0;
+}
+.pricing-card .btn {
+    margin-top: 1rem;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    background-color: #56C596;
+    color: #FFFFFF;
+    transition: background-color 0.3s ease;
+}
+.pricing-card .btn:hover {
+    background-color: #329D9C;
+}
+/* ====== Calendar (room schedule) ====== */
+.calendar-legend .legend-box{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:6px;vertical-align:middle}
+.bg-available{background:#d4f8e8;border:1px solid #9ae6b4}
+.bg-occupied{background:#ffd4d4;border:1px solid #f19797}
+.bg-maintenance{background:#fff3bf;border:1px solid #ffd66d}
+.calendar-year{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.calendar-month{background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:8px}
+.calendar-month-title{font-weight:600;margin-bottom:6px}
+.calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.calendar-dow{font-size:.75rem;color:#6b7280;text-align:center}
+.calendar-day{height:28px;border-radius:6px;font-size:.8rem;display:flex;align-items:center;justify-content:center}
+.calendar-day.empty{background:transparent}
+.calendar-day.status-disponible{background:#d4f8e8;color:#065f46}
+.calendar-day.status-ocupada{background:#ffd4d4;color:#7f1d1d}
+.calendar-day.status-mantenimiento{background:#fff3bf;color:#8a6d3b}
+/* =======================
+   ESTILOS LOGIN Y REGISTRO
+   ======================= */
+.login-hero-wrapper {
+    display: flex;
+    align-items: stretch; /* que imagen y card ocupen toda la altura */
+    justify-content: center;
+    min-height: 100vh;
+    background: #f9f6f1; /* tono beige claro */
+    padding: 0;
+}
+
+/* Imagen lateral */
+.login-hero-img {
+    width: 50%;              /* ocupa la mitad */
+    height: 100vh;           /* pantalla completa */
+    object-fit: cover;
+    border-radius: 0;        /* sin esquinas redondeadas */
+    box-shadow: none;        /* limpio */
+}
+
+/* Card principal */
+.login-container {
+    width: 50%;              /* la otra mitad */
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 4rem 3rem;
+    border-radius: 0;
+    box-shadow: none;
+    text-align: left;        /* como en la referencia */
+    width: 100%;
+}
+
+    
+/* Títulos */
+.hotel-title {
+    font-family: 'Poppins', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #9a7b4f; /* dorado elegante */
+    margin-bottom: 0.5rem;
+}
+.hotel-sub {
+    font-size: 1.1rem;
+    color: #7a7a7a;
+    margin-bottom: 2rem;
+}
+
+/* Inputs */
+.form-label {
+    color: #444;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+.form-control {
+    border-radius: 8px;
+    border: 1.5px solid #d9d4cc;
+    background: #faf9f7;
+    color: #333;
+    font-size: 1rem;
+    padding: 0.9rem 1rem;
+    margin-bottom: 1.2rem;
+    transition: all 0.3s;
+}
+.form-control:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 6px rgba(37,99,235,0.3);
+    background: #fff;
+}
+
+/* Botón principal */
+.btn-main {
+    background: #2563eb;  /* azul */
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1.05rem;
+    padding: 0.85rem 0;
+    margin-bottom: 1rem;
+    transition: all 0.3s;
+}
+.btn-main:hover {
+    background: #1d4ed8;
+    transform: translateY(-2px);
+}
+
+/* Botón de filtro tipo píldora (inventarios) */
+.btn-filter {
+    background: #fff;
+    color: #111;
+    border: 1px solid #e5e7eb;
+    border-radius: 999px;
+    padding: 8px 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+}
+
+/* Usuario - Menú Restaurante (lista tipo screenshot) */
+.menu-list .menu-row { transition: box-shadow .2s, transform .15s; }
+.menu-list .menu-row:hover { transform: translateY(-2px); box-shadow: 0 14px 30px rgba(16, 185, 129, .15); }
+.btn.btn-primary.rounded-pill { background: #0ea5a5; border: none; }
+.btn.btn-primary.rounded-pill:hover { filter: brightness(1.05); }
+
+/* =======================
+   RESTAURANTE - CARD STYLE
+   (Diseño inspirado en maqueta con azules)
+   ======================= */
+.menu-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 32px;
+}
+@media (min-width: 768px){
+    .menu-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 1100px){
+    .menu-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+.menu-card {
+    border-radius: 20px;
+    background: #ffffff;
+    box-shadow: 0 20px 50px rgba(59, 130, 246, 0.15);
+    padding: 18px 20px 16px;
+    transition: transform .25s ease, box-shadow .25s ease;
+}
+.menu-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 26px 60px rgba(59, 130, 246, 0.22);
+}
+
+.menu-media {
+    position: relative;
+    height: 260px;
+    border-radius: 14px;
+    overflow: hidden;
+    background: linear-gradient(180deg, #e6f1ff 10%, #5c97ff 95%);
+    display: flex;
+    align-items: end;
+}
+.menu-media img { 
+    position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; 
+}
+.menu-tag {
+    position: relative;
+    margin: 0 0 14px 14px;
+    letter-spacing: 2px;
+    font-weight: 800;
+    font-size: .72rem;
+    color: #ffffff;
+    padding: 10px 14px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.2);
+    backdrop-filter: blur(6px);
+    text-transform: uppercase;
+}
+
+.menu-index-title {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    gap: 12px; padding: 14px 6px 8px;
+    border-bottom: 1px solid #eef2ff;
+}
+.menu-index {
+    font-size: 2.8rem; font-weight: 700; line-height: 1;
+    color: #9bb8ff;
+}
+.menu-title { font-size: 1.25rem; font-weight: 600; color: #374151; }
+
+.menu-meta {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 6px 6px;
+}
+.menu-meta .label { font-size: .75rem; letter-spacing: 2px; color: #9ca3af; font-weight: 700; }
+.menu-stars { color: #3b82f6; font-size: 1rem; letter-spacing: 1px; }
+
+.menu-btn {
+    background: linear-gradient(135deg, #60a5fa, #3b82f6);
+    color: #fff; border: none;
+    padding: 10px 18px; border-radius: 999px;
+    font-weight: 800; font-size: .9rem; letter-spacing: .5px;
+    box-shadow: 0 10px 24px rgba(59,130,246,.35);
+    transition: transform .15s ease, filter .2s ease, box-shadow .2s ease;
+}
+.menu-btn:hover { filter: brightness(1.05); transform: translateY(-1px); box-shadow: 0 16px 28px rgba(37,99,235,.45); }
+
+.btn-filter .bi-funnel { color: #2563eb; font-weight: 700; }
+.btn-filter:hover { box-shadow: 0 6px 16px rgba(0,0,0,0.1); background: #fafafa; }
+.rotate-180 { transform: rotate(180deg); transition: transform 0.15s ease; }
+
+/* Barra de acento azul bajo el título en Inventarios */
+.inv-accent{
+    height: 6px;
+    width: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #1e3a8a, #2563eb, #7c3aed);
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+}
+
+/* Header card estilo dashboard (gradiente oscuro) */
+.inv-header-card{
+    background: radial-gradient(1200px 300px at 20% -10%, rgba(99,102,241,0.15), transparent 60%),
+                linear-gradient(180deg, #0b1322, #0f172a);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.45), inset 0 0 0 1px rgba(255,255,255,0.02);
+    color: #e5e7eb;
+}
+.inv-header-card h2{ color:#c7d2fe; font-weight: 800; letter-spacing: .2px; }
+.inv-stats{ color:#a1a1aa; gap: 28px; }
+.inv-stats .stat-num{ color:#c7d2fe; font-weight:800; font-size: 1.6rem; margin-right: 6px; }
+
+/* Botón CTA gradiente */
+.btn-cta-gradient{
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    padding: 10px 18px;
+    font-weight: 700;
+    box-shadow: 0 10px 25px rgba(59,130,246,0.35);
+}
+.btn-cta-gradient:hover{ filter: brightness(1.06); box-shadow: 0 12px 30px rgba(29,78,216,0.45); }
+
+/* Tema oscuro para formularios */
+.form-dark-box{
+    background: #0f172a !important;
+    color: #e5e7eb !important;
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 16px;
+    box-shadow: 0 10px 24px rgba(0,0,0,0.35);
+}
+.form-dark .form-label{ color:#cbd5e1; }
+.form-dark .form-control,
+.form-dark .form-select,
+.form-dark textarea{
+    background: #111827;
+    color: #e5e7eb;
+    border: 1px solid #1f2937;
+}
+.form-dark .form-control:focus,
+.form-dark .form-select:focus,
+.form-dark textarea:focus{
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 .2rem rgba(79,70,229,0.25);
+}
+.form-dark .btn-primary{ background:#2563eb; border-color:#2563eb; }
+.form-dark .btn-secondary{ background:#334155; border-color:#334155; color:#e5e7eb; }
+
+/* Tema oscuro para formularios (coherente con tabla de inventarios) */
+.form-dark{
+    background: #0f172a; /* slate-900 */
+    color: #e5e7eb;      /* zinc-200 */
+    border-radius: 12px;
+    border: 1px solid #1f2937;
+}
+.form-dark .form-label{ color: #cbd5e1; }
+.form-dark .text-muted{ color: #9ca3af !important; }
+.form-dark .form-control,
+.form-dark .form-select,
+.form-dark textarea{ 
+    background: #111827; /* gray-900 */
+    border: 1px solid #374151;
+    color: #e5e7eb;
+}
+.form-dark .form-control::placeholder,
+.form-dark textarea::placeholder{ color: #9ca3af; }
+.form-dark .form-control:focus,
+.form-dark .form-select:focus,
+.form-dark textarea:focus{
+    border-color: #2563eb;
+    box-shadow: 0 0 0 0.2rem rgba(37,99,235,0.25);
+    background: #0b1220;
+}
+.form-dark .form-check-input{
+    background-color: #111827;
+    border-color: #374151;
+}
+.form-dark .form-check-input:checked{ background-color: #2563eb; border-color: #2563eb; }
+
+/* Botón link */
+.btn-link {
+    color: #2563eb;
+    font-size: 0.95rem;
+    background: none;
+    border: none;
+    margin-top: 0.5rem;
+    margin-bottom: 1rem;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+.btn-link:hover {
+    color: #1d4ed8;
+    text-decoration: underline;
+}
+
+/* Botón Google */
+.google-btn {
+    background: #faf9f7;
+    border: 1px solid #d9d4cc;
+    border-radius: 8px;
+    padding: 0.8rem 0;
+    font-weight: 500;
+    font-size: 0.95rem;
+    color: #333;
+    transition: all 0.3s;
+}
+.google-btn:hover {
+    background: #f1ede8;
+    transform: translateY(-2px);
+}
+
+/* =======================
+   ESTILOS RECUPERACIÓN DE CONTRASEÑA
+   ======================= */
+.recover-hero-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 70vh;
+    padding: 4rem 1rem;
+}
+
+.recover-card {
+    width: 520px;
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 2.2rem 2.4rem;
+    box-shadow: 0 10px 30px rgba(16,20,24,0.08);
+    margin: 0 auto;
+}
+
+.recover-card h2 {
+    font-size: 1.4rem;
+    color: #2b2b2b;
+    margin-bottom: 0.75rem;
+}
+
+.recover-card p.helper {
+    color: #6b6b6b;
+    font-size: 0.95rem;
+    margin-bottom: 1.25rem;
+}
+
+.recover-card .form-control {
+    border-radius: 8px;
+    padding: 0.85rem 1rem;
+}
+
+.recover-actions {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.btn-secondary-light {
+    background: transparent;
+    border: 1px solid #e6dfd1;
+    color: #423423;
+    border-radius: 8px;
+    padding: 0.65rem 0.9rem;
+}
+
+/* Link pequeño situado en el form de login */
+.login-container .text-end a {
+    color: #c6a76c;
+    font-weight: 600;
+    text-decoration: none;
+}
+.login-container .text-end a:hover {
+    color: #9a7b4f;
+    text-decoration: underline;
+}
+
+/* Mensajes (flash) personalizados para que encajen con el tema */
+.flash-message {
+    max-width: 900px;
+    margin: 1rem auto;
+    padding: 0.85rem 1rem;
+    border-radius: 10px;
+    font-weight: 600;
+    box-shadow: 0 6px 18px rgba(12, 12, 12, 0.06);
+}
+.flash-message.info { background: #eef6f4; color: #0b4a45; border: 1px solid #d6efe9; }
+.flash-message.success { background: #f3f7ee; color: #2e5a2f; border: 1px solid #e1efd7; }
+.flash-message.warning { background: #fff6ea; color: #6a4a1a; border: 1px solid #f3e6c9; }
+.flash-message.danger { background: #fff6f6; color: #6a1a1a; border: 1px solid #f3d6d6; }
+
+@media (max-width: 700px) {
+    .recover-card { width: 92%; padding: 1.5rem; }
+}
+
+/* Centrar el enlace de 'olvidaste contraseña' y hacerlo proporcional */
+.forgot-link {
+    text-align: center;
+}
+.forgot-link a {
+    display: inline-block;
+    padding: 0.45rem 0.9rem;
+    border-radius: 999px;
+    background: rgba(198,167,108,0.1);
+    color: #c6a76c;
+    font-weight: 600;
+    text-decoration: none;
+    border: 1px solid rgba(198,167,108,0.12);
+    transition: all 0.18s ease;
+    font-size: 0.95rem;
+}
+.forgot-link a:hover {
+    background: rgba(198,167,108,0.15);
+    transform: translateY(-2px);
+}
+
+@media (max-width: 900px) {
+    .forgot-link a { font-size: 0.95rem; padding: 0.5rem 1rem; }
+}
+
+
+
+/* Responsivo */
+@media (max-width: 900px) {
+    .login-hero-wrapper {
+        flex-direction: column;
+    }
+    .login-hero-img, .login-container {
+        width: 100%;
+        height: auto;
+    }
+    .login-container {
+        padding: 2rem 1.5rem;
+        text-align: center;
+    }
+}
+
+/* =======================
+   ESTILOS MODAL RESTAURANTE Y HABITACIONES
+   ======================= */
+.modal {
+    z-index: 1060 !important;
+    pointer-events: auto !important;
+}
+
+.modal-backdrop {
+    z-index: 1055 !important;
+    pointer-events: auto !important;
+}
+
+.modal-dialog {
+    max-width: fit-content; /* el modal se ajusta al contenido */
+    margin: auto;           /* lo centra en la pantalla */
+    pointer-events: auto !important;
+    z-index: 1061 !important;
+}
+
+.modal-content {
+    pointer-events: auto !important;
+    z-index: 1062 !important;
+}
+
+.modal-body img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+
+/* Asegurar que todos los elementos del modal sean interactivos */
+.modal * {
+    pointer-events: auto !important;
+}
+
+/* Botones dentro de modales */
+.modal .btn {
+    pointer-events: auto !important;
+    cursor: pointer !important;
+}
+
+/* stylos para que se levante las tarjetas del restaurante*/
+
+.card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.card:hover {
+  transform: translateY(-10px); /* Se levanta */
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2); /* Más sombra */
+}
+
+/* Estilos base del body y background */
+body {
+    font-family: 'Arial', sans-serif;
+    background: 
+        radial-gradient(circle at 20% 50%, rgba(211, 215, 212, 0.3) 0%, transparent 60%),
+        radial-gradient(circle at 80% 20%, rgba(232, 232, 230, 0.25) 0%, transparent 60%),
+        radial-gradient(circle at 40% 80%, rgba(211, 215, 212, 0.25) 0%, transparent 60%),
+        linear-gradient(135deg, #D3D7D4 0%, #DEE1DE 40%, #E3E5E3 80%, #E8E8E6 100%);
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="waves" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.25)"/><circle cx="75" cy="75" r="0.9" fill="rgba(211,215,212,0.2)"/><circle cx="50" cy="10" r="1.1" fill="rgba(232,232,230,0.18)"/><circle cx="10" cy="60" r="0.8" fill="rgba(255,255,255,0.15)"/><circle cx="90" cy="30" r="1" fill="rgba(211,215,212,0.2)"/></pattern></defs><rect width="100" height="100" fill="url(%23waves)"/></svg>') repeat;
+    pointer-events: none;
+    z-index: -1;
+}
+
+/* Navbar cristalina */
+.navbar {
+    background: rgba(255, 255, 255, 0.7) !important;
+    backdrop-filter: blur(18px) saturate(160%) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.5) !important;
+    transition: all 0.4s ease !important;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05) !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 1030 !important;
+}
+
+/* Navbar al hacer scroll */
+.navbar-scrolled {
+    background: linear-gradient(135deg, 
+        rgba(211, 215, 212, 0.9), 
+        rgba(232, 232, 230, 0.95)
+    ) !important;
+    backdrop-filter: blur(20px) saturate(180%) !important;
+    box-shadow: 
+        0 8px 30px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.5) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.5) !important;
+}
+
+/* Logo */
+.navbar img {
+    transition: all 0.4s ease !important;
+    border-radius: 50% !important;
+    box-shadow: 0 0 12px rgba(211, 215, 212, 0.7) !important;
+}
+
+.navbar img:hover {
+    transform: scale(1.05) !important;
+    box-shadow: 0 0 18px rgba(232, 232, 230, 0.9) !important;
+}
+
+/* Texto */
+.navbar .fw-bold {
+    color: #090909 !important;
+    text-shadow: 0 0 10px rgba(232, 232, 230, 0.7) !important;
+    transition: all 0.4s ease !important;
+}
+
+.navbar .fw-bold:hover {
+    color: #0e0e0e !important;
+    text-shadow: 0 0 15px rgba(211, 215, 212, 0.9) !important;
+}
+
+/* Enlaces */
+.navbar-nav .nav-link {
+    color: #0f0f0f !important;
+    font-weight: 500 !important;
+    transition: all 0.4s ease !important;
+    padding: 10px 18px !important;
+    border-radius: 30px !important;
+    position: relative !important;
+}
+
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link.active {
+    color: #0e0e0e !important;
+    background: rgba(255, 255, 255, 0.35) !important;
+    box-shadow: 0 4px 12px rgba(232, 232, 230, 0.4) !important;
+}
+
+/* Botón login */
+.btn-login {
+    background: linear-gradient(135deg, 
+        rgba(211, 215, 212, 0.5), 
+        rgba(232, 232, 230, 0.5)
+    ) !important;
+    border: 1px solid rgba(255, 255, 255, 0.6) !important;
+    color: #ffffff !important;
+    padding: 8px 16px !important;
+    border-radius: 25px !important;
+    transition: all 0.4s ease !important;
+    backdrop-filter: blur(10px) !important;
+    box-shadow: 0 4px 12px rgba(211, 215, 212, 0.3) !important;
+}
+
+.btn-login:hover {
+    background: linear-gradient(135deg, 
+        rgba(211, 215, 212, 0.8), 
+        rgba(232, 232, 230, 0.8)
+    ) !important;
+    box-shadow: 0 6px 18px rgba(211, 215, 212, 0.5) !important;
+}
+
+/* Footer */
+footer {
+    background: linear-gradient(135deg, 
+        rgba(211, 215, 212, 0.9), 
+        rgba(232, 232, 230, 0.95)
+    ) !important;
+    backdrop-filter: blur(15px) !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.4) !important;
+    color: black; /* Cambia el color de la letra del footer a negro */
+}
+
+body {
+  color: #070707 !important;   /* texto base blanco */
+}
+
+/* =======================
+   ROOM IMAGE FIX
+   Uniform room images with fixed height and object-fit
+   ======================= */
+.room-img {
+    width: 100%;
+    height: 640px; /* increased visual height for room thumbnails */
+    object-fit: cover; /* crop smartly to fill area */
+    border-radius: 8px;
+    display: block;
+}
+@media (max-width: 768px) {
+    .room-img {
+        height: auto; /* let it flow on small screens */
+    }
+}
+
+/* Plan / pricing cards for Selección de Habitación */
+.plans-grid .plan-card {
+    border-radius: 12px;
+    overflow: hidden;
+    background: #030303; /* casi negro */
+    color: #ffffff;
+    min-height: 600px; /* ahora mucho más largas */
+    display: flex;
+    flex-direction: column;
+}
+.plans-grid .plan-card .plan-body {
+    background: transparent;
+    padding: 3.5rem; /* más espacio vertical */
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+}
+.plans-grid .plan-card .plan-title { font-weight: 800; font-size: 1.5rem; }
+.plans-grid .plan-price { font-size: 2.4rem; font-weight: 900; }
+.plans-grid .plan-price .price-amount { font-size: 2.4rem; }
+.plans-grid .plan-card.featured {
+    background: #000000; /* tarjeta destacada aún más oscura */
+    border-radius: 14px;
+    box-shadow: 0 16px 40px rgba(0,0,0,0.7), 0 4px 10px rgba(0,0,0,0.6);
+    transform: translateY(-8px);
+    border: 1px solid rgba(255,255,255,0.03);
+}
+.plans-grid .plan-card.featured .plan-body { padding: 4rem; }
+.plans-grid .plan-card .plan-select-btn {
+    border-radius: 30px;
+    padding: 0.95rem 1.25rem;
+    font-weight: 800;
+    font-size: 1.1rem;
+    border: 1px solid rgba(255,255,255,0.08);
+    background: transparent;
+    color: #ffffff;
+}
+.plans-grid .plan-card.featured .plan-select-btn {
+    background: #ffffff; color: #000000; border: none;
+}
+.plans-grid .plan-card ul { font-size: 1.12rem; line-height: 1.8; }
+
+@media (max-width: 767px) {
+    .plans-grid .plan-card { margin-bottom: 0.5rem; min-height: auto; }
+    .plans-grid .plan-card .plan-body { padding: 1.25rem; }
+    .plans-grid .plan-card .plan-title { font-size: 1.15rem; }
+    .plans-grid .plan-price { font-size: 1.5rem; }
+}
+
+/* Tablet: two columns and slightly reduced heights */
+@media (min-width: 768px) and (max-width: 991px) {
+    .plans-grid .col-md-4 { flex: 0 0 50%; max-width: 50%; }
+    .plans-grid .plan-card { min-height: 520px; }
+    .plans-grid .plan-card .plan-body { padding: 2rem; }
+    .plans-grid .plan-card .plan-title { font-size: 1.25rem; }
+    .plans-grid .plan-price { font-size: 1.8rem; }
+}
+
+/* Ensure full-width buttons and comfortable spacing on all sizes */
+.plans-grid .plan-card .plan-select-btn { width: 100%; display: inline-block; }
+.plans-grid { display: flex; flex-wrap: wrap; }
+.plans-grid > .col-md-4 { display: flex; }
+.plans-grid > .col-md-4 .plan-card { flex: 1 1 auto; }
+
+/* Small polish: reduce transform on very small screens */
+@media (max-width: 991px) {
+    .plans-grid .plan-card.featured { transform: none; box-shadow: 0 8px 18px rgba(0,0,0,0.45); }
+}
+
+/* feature icon in list items */
+.plans-grid .plan-card ul li { display: flex; align-items: center; gap: 0.6rem; }
+.plans-grid .plan-card .feature-icon svg { display: block; color: #0d6efd; }
+.plans-grid .plan-card.featured .feature-icon svg { color: #ffd166; }
+
+/* Dashboard card color variants */
+.card-occupancy { background: linear-gradient(180deg,#0d6efd17,#0d6efd05); border-left: 6px solid #0d6efd; }
+.card-revenue { background: linear-gradient(180deg,#19875410,#19875405); border-left: 6px solid #198754; }
+.card-checkins { background: linear-gradient(180deg,#fd7e1410,#fd7e1405); border-left: 6px solid #fd7e14; }
+.card-sat { background: linear-gradient(180deg,#6610f210,#6610f205); border-left: 6px solid #6610f2; }
+.card-occupancy .card-body, .card-revenue .card-body, .card-checkins .card-body, .card-sat .card-body { color: #0b1320; }
+
+/* Make login hero taller and proportional when user wanted 'mas alto' */
+.login-hero-wrapper { min-height: 80vh; }
+.login-hero-img { min-height: 80vh; }
+
+/* Make proportional home image taller as requested */
+.proportional-img { max-height: 70vh; }
+.room-img { height: 640px; }
+
+/* Nosotros page typography */
+.nosotros-content p {
+    font-size: 1.12rem; /* slightly larger */
+    line-height: 1.75;
+    color: #222222;
+}
+@media (min-width: 992px) {
+    .nosotros-content p {
+        font-size: 1.15rem;
+    }
+}
+
+/* Proportional images that align visually with adjacent text */
+.proportional-img {
+    width: 100%;
+    height: auto;
+    max-height: 70vh; /* much taller and responsive to viewport */
+    object-fit: cover;
+}
+
+/* Login hero: image as background-like element with proportional sizing */
+.login-hero-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+    min-height: 80vh; /* taller login section */
+}
+.login-hero-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+    filter: brightness(0.45) saturate(0.9);
+}
+.login-container {
+    position: relative;
+    z-index: 2;
+    max-width: 420px;
+    width: 100%;
+    background: rgba(255,255,255,0.96);
+    border-radius: 10px;
+    padding: 1.5rem;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+}
+
+@media (max-width: 767px) {
+    .login-hero-wrapper { padding: 1rem; }
+    .login-container { background: rgba(255,255,255,0.98); }
+    .room-img { height: 360px; }
+    .proportional-img { max-height: 50vh; }
+}
+
+/* =======================
+   RECOLOR .btn-warning TO BRAND GOLD (from provided image)
+   ======================= */
+.btn-warning {
+    background-color: #3b82f6 !important; /* azul principal */
+    border-color: #2563eb !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 10px rgba(37,99,235,0.15);
+}
+.btn-warning:hover,
+.btn-warning:focus {
+    background-color: #2563eb !important;
+    border-color: #1d4ed8 !important;
+    color: #ffffff !important;
+}
+.btn-warning:active {
+    background-color: #1d4ed8 !important;
+    border-color: #1e40af !important;
+    transform: translateY(1px);
+}
+
+/* Highlight button used for calls-to-action (blue variant) */
+.btn-highlight {
+    background-color: #0d6efd !important; /* Bootstrap blue */
+    border-color: #0a58ca !important;
+    color: #ffffff !important;
+    box-shadow: 0 6px 18px rgba(13,110,253,0.18);
+    padding: 0.6rem 1rem !important;
+    border-radius: 8px !important;
+}
+
+/* =======================
+   HOME POSTS: HORIZONTAL CARDS (text left, image right)
+   Keep consistent height and responsive behavior
+   ======================= */
+/* Bubble animated background (applied globally via base templates) */
+.bubble-layer{ position: fixed; inset: 0; width: 100%; height: 100%; overflow: hidden; pointer-events: none; z-index: 0; }
+/* Ensure page content is above the background */
+body > nav, body > main, body > footer{ position: relative; z-index: 1; }
+
+.bubble{
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.4);
+    -webkit-backdrop-filter: blur(2px);
+    backdrop-filter: blur(2px);
+    animation-name: float;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+}
+.bubble.blue{ box-shadow: 0 0 30px rgba(59,130,246,0.6), 0 0 60px rgba(59,130,246,0.4), inset 0 0 20px rgba(59,130,246,0.3); }
+.bubble.green{ box-shadow: 0 0 30px rgba(34,197,94,0.6), 0 0 60px rgba(34,197,94,0.4), inset 0 0 20px rgba(34,197,94,0.3); }
+
+@keyframes float{
+    0%{ transform: translateY(0) translateX(0) scale(1); opacity: 0; }
+    10%{ opacity: 1; }
+    90%{ opacity: 1; }
+    100%{ transform: translateY(-110vh) translateX(var(--float-x)) scale(var(--float-scale)); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce){
+    .bubble{ animation: none !important; display: none !important; }
+    .bubble-layer{ display: none !important; }
+}
+.form-card{
+    background:#fff;
+    border-radius: 20px;
+    box-shadow: 0 18px 40px rgba(17,24,39,0.12);
+    border: 1px solid rgba(0,0,0,0.04);
+    overflow: hidden;
+}
+.form-card .form-header{
+    background: linear-gradient(135deg, #7c3aed 0%, #3b82f6 100%);
+    color:#fff;
+    padding: 18px 20px;
+}
+.form-card .form-header h3{ font-weight:800; margin:0; font-size: 1.5rem; }
+.form-card .form-header .sub{ opacity:.95; font-weight:500; margin-top: 4px; }
+.form-card .form-body{ padding: 22px 20px; }
+.upload-dropzone{
+    border: 2px dashed #d1d5db;
+    border-radius: 14px;
+    padding: 22px;
+    text-align: center;
+    background: #fafafa;
+    color:#6b7280;
+}
+.upload-dropzone:hover{ background:#f5f7ff; border-color:#c7d2fe; }
+.btn-cancel{
+    background:#eef2ff; color:#334155; border:1px solid #e5e7eb; font-weight:700;
+}
+.btn-cancel:hover{ background:#e0e7ff; }
+.btn-form-primary{
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    color:#fff; font-weight:800; border:none; box-shadow: 0 10px 26px rgba(37,99,235,0.28);
+}
+.btn-form-primary:hover{ filter: brightness(1.05); box-shadow:0 12px 30px rgba(29,78,216,0.35); }
+.home-post-card {
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+    padding: 8px 10px;
+    background: linear-gradient(90deg, #fbf7f1 0%, #fff 55%);
+    box-shadow: 0 8px 18px rgba(13, 33, 48, 0.10);
+    max-width: 1100px;
+    margin: 0 auto;
+}
+/* sutil divisor vertical como en el diseño */
+@media (min-width: 992px) {
+  .home-post-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      width: 1px;
+      transform: translateX(-50%);
+            background: linear-gradient(
+        to bottom,
+                rgba(0,0,0,0) 0%,
+                rgba(13,33,48,0.05) 45%,
+                rgba(13,33,48,0.05) 55%,
+                rgba(0,0,0,0) 100%
+      );
+      pointer-events: none;
+  }
+}
+
+.home-post-visual {
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow:
+        0 12px 28px rgba(13, 33, 48, 0.14),
+        0 4px 12px rgba(14, 72, 90, 0.10);
+    border: 1px solid rgba(0,0,0,0.03);
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.home-post-img {
+    width: 100%;
+    height: 100%;
+    max-height: 300px;
+    object-fit: cover;
+    display: block;
+}
+/* Set a consistent visual height on md+; let it flow on small */
+@media (min-width: 768px) {
+    .home-post-card .home-post-visual { min-height: 230px; }
+}
+@media (max-width: 767.98px) {
+    .home-post-card .home-post-visual { height: 260px; }
+}
+/* Clamp long text for uniform card heights */
+.home-post-text {
+    display: -webkit-box;
+    line-clamp: 5;
+    -webkit-line-clamp: 5;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+.home-post-card h5.card-title { font-size: 1.2rem; }
+.btn-highlight:hover,
+.btn-highlight:focus {
+    background-color: #0b5ed7 !important;
+    border-color: #084298 !important;
+    color: #fff !important;
+    transform: translateY(-1px);
+}
+.btn-highlight:active {
+    background-color: #084298 !important;
+    border-color: #052f5f !important;
+}
+
+/* =======================
+   ESTILOS CARDS HABITACIONES ADMIN
+   ======================= */
+.habitacion-card {
+  background: #f8fffa;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(86,197,150,0.08);
+  padding: 2rem 1.5rem;
+  transition: box-shadow 0.3s, border 0.3s;
+  border: 2px solid #e3fbe3;
+  position: relative;
+}
+.habitacion-card h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+.habitacion-card .iconos span {
+  font-size: 1.5rem;
+  margin-right: 0.5rem;
+}
+.estado-label {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  padding: 0.4em 1em;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 1rem;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  animation: estadoAnim 1.2s infinite alternate;
+}
+.estado-label.disponible {
+  background: #56C596;
+}
+.estado-label.mantenimiento {
+  background: #ffe082;
+  color: #333;
+}
+.estado-label.ocupada {
+  background: #ff6f6f;
+}
+.estado-opciones .btn {
+  font-weight: 600;
+  font-size: 1rem;
+  margin: 0 0.5em;
+  border-radius: 12px;
+  transition: box-shadow 0.2s, background 0.2s;
+}
+.estado-opciones .btn-success {
+  background: #56C596;
+  border: none;
+}
+.estado-opciones .btn-warning {
+  background: #ffe082;
+  color: #333;
+  border: none;
+}
+.estado-opciones .btn-danger {
+  background: #ff6f6f;
+  border: none;
+}
+.animate-estado {
+  animation: cardAnim 1.2s infinite alternate;
+}
+@keyframes estadoAnim {
+  0% { box-shadow: 0 0 0 0 rgba(86,197,150,0.15); }
+  100% { box-shadow: 0 0 16px 4px rgba(86,197,150,0.15); }
+}
+@keyframes cardAnim {
+  0% { border-color: #e3fbe3; }
+  100% { border-color: #56C596; }
+}
+
+/* ========= BLOQUE NUEVO: Inventario + Perfil Admin (namespaced/aislado) ========= */
+/* INVENTORY PAGE */
+.inventory-page .inv-header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; border-radius: 12px; }
+.inventory-page .inv-header h1 { font-weight: 700; }
+.inventory-page .content-card { background: #ffffff; border-radius: 16px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); }
+.inventory-page .info-section { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 20px; padding: 18px; background: #f8f9fa; border-radius: 12px; border-left: 4px solid #667eea; }
+.inventory-page .section-title { font-size: 1.5rem; color: #667eea; margin: 1rem 0 0.75rem; border-bottom: 3px solid #667eea; padding-bottom: 6px; }
+.inventory-page .subsection-title { font-size: 1.1rem; color: #764ba2; margin: 0.75rem 0 0.5rem; font-weight: 600; }
+.inventory-page .items-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; }
+.inventory-page .item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: #f8f9fa; border-radius: 10px; transition: all 0.2s ease; border: 2px solid transparent; }
+.inventory-page .item:hover { background: #eef2ff; border-color: #667eea33; }
+.inventory-page .item input[type="number"],
+.inventory-page .item input[type="text"],
+.inventory-page .info-section input[type="text"],
+.inventory-page .info-section input[type="date"] { border: 2px solid #e0e0e0; border-radius: 8px; }
+.inventory-page .observations { margin-top: 16px; padding: 18px; background: #fff3cd; border-radius: 12px; border-left: 5px solid #ffc107; }
+.inventory-page .stars { display: flex; gap: 6px; }
+.inventory-page .star { font-size: 1.5rem; cursor: pointer; color: #ddd; transition: transform 0.15s, color 0.15s; }
+.inventory-page .star.active, .inventory-page .star:hover { color: #ffc107; transform: scale(1.05); }
+@media print { .no-print { display: none !important; } }
+
+/* Inventory form: lighter blue theme inside inventory page */
+.inventory-page .form-dark-box,
+.inventory-page .form-dark{
+    background: #eaf2ff !important; /* light blue */
+    color: #0f172a; /* dark text for readability */
+    border: 1px solid #c7d2fe;
+}
+.inventory-page .form-dark .form-label{ color:#1f2937; }
+.inventory-page .form-dark .text-muted{ color:#6b7280 !important; }
+.inventory-page .form-dark .form-control,
+.inventory-page .form-dark .form-select,
+.inventory-page .form-dark textarea{
+    background: #ffffff; /* light field */
+    color: #111827;
+    border: 1px solid #c7d2fe;
+}
+.inventory-page .form-dark .form-control::placeholder,
+.inventory-page .form-dark textarea::placeholder{ color:#9aa6c7; }
+.inventory-page .form-dark .form-control:focus,
+.inventory-page .form-dark .form-select:focus,
+.inventory-page .form-dark textarea:focus{
+    border-color: #2563eb;
+    box-shadow: 0 0 0 0.2rem rgba(37,99,235,0.18);
+    background: #f8fbff;
+}
+.inventory-page .form-dark .form-check-input{
+    background-color: #ffffff;
+    border-color: #c7d2fe;
+}
+.inventory-page .form-dark .form-check-input:checked{
+    background-color: #2563eb;
+    border-color: #2563eb;
+}
+
+/* Admin Profile page */
+.profile-card, .settings-card { background: #ffffff; border-radius: 24px; box-shadow: 0 14px 40px rgba(0,0,0,0.08); }
+.settings-card h5 { font-weight: 600; }
+.profile-avatar { width: 110px; height:110px; border-radius: 50%; object-fit: cover; border: 4px solid #fff; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+
+/* =======================
+   ESTILOS CALENDARIO
+   ======================= */
+.calendar-widget {
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+    padding: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.calendar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.calendar-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1f2937;
+    display: flex;
+    gap: 8px;
+}
+
+.calendar-days-header {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+    margin-bottom: 8px;
+}
+
+.calendar-day-name {
+    text-align: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #6b7280;
+    padding: 8px 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.calendar-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+}
+
+.calendar-day {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #374151;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.calendar-day:hover {
+    background-color: #f3f4f6;
+    transform: scale(1.05);
+}
+
+.calendar-day.other-month {
+    color: #d1d5db;
+}
+
+.calendar-day.today {
+    background-color: #dbeafe;
+    color: #1d4ed8;
+    font-weight: 700;
+}
+
+.calendar-day.selected {
+    background-color: #3b82f6;
+    color: white;
+    font-weight: 700;
+}
+
+.calendar-day.available {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+.calendar-day.available:hover {
+    background-color: #a7f3d0;
+}
+
+.calendar-day.reserved {
+    background-color: #fef3c7;
+    color: #92400e;
+    position: relative;
+}
+
+.calendar-day.reserved::after {
+    content: '●';
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    font-size: 0.5rem;
+    color: #d97706;
+}
+
+.calendar-day.disabled {
+    background-color: #f9fafb;
+    color: #d1d5db;
+    cursor: not-allowed;
+}
+
+.calendar-day.disabled:hover {
+    background-color: #f9fafb;
+    transform: none;
+}
+
+/* Responsive design para el calendario */
+@media (max-width: 768px) {
+    .calendar-widget {
+        padding: 15px;
+    }
+    
+    .calendar-day {
+        font-size: 0.75rem;
+    }
+    
+    .calendar-day-name {
+        font-size: 0.625rem;
+        padding: 6px 2px;
+    }
+}
+
+/* Estados adicionales para reservas de hospedaje */
+.calendar-day.checkin {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+}
+
+.calendar-day.checkout {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: white;
+}
+
+.calendar-day.stay {
+    background: linear-gradient(135deg, #6366f1, #4f46e5);
+    color: white;
+}
+
+/* Leyenda del calendario */
+.calendar-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.calendar-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.75rem;
+    color: #6b7280;
+}
+
+.calendar-legend-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+}
+
+.legend-available { background-color: #d1fae5; }
+.legend-reserved { background-color: #fef3c7; }
+.legend-disabled { background-color: #f9fafb; }
+.legend-selected { background-color: #3b82f6; }
+.legend-today { background-color: #dbeafe; }
+
+
