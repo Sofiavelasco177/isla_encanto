@@ -17,5 +17,11 @@ else
   echo "DATABASE_URL detected; skipping SQLite file initialization"
 fi
 
-# Execute the container CMD
+# Si no se pasó ningún comando, o si el primer argumento empieza con '-'
+# (opciones de gunicorn), arrancar gunicorn por defecto.
+if [ $# -eq 0 ] || [ "${1#-}" != "$1" ]; then
+  set -- gunicorn --config gunicorn.conf.py run:app "$@"
+fi
+
+# Ejecutar el comando final
 exec "$@"

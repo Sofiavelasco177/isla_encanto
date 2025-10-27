@@ -9,7 +9,8 @@ RUN apk add --no-cache \
     g++ \
     musl-dev \
     linux-headers \
-    libffi-dev
+    libffi-dev \
+    bash
 
 # Copiar archivos de requirements
 COPY requirements.txt .
@@ -53,7 +54,7 @@ ENV FLASK_ENV=production
 ENV PYTHONPATH=/app
 
 # Configurar punto de entrada
-ENTRYPOINT ["docker-entrypoint.sh"]
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 
 # Comando para ejecutar la aplicación con Gunicorn
 CMD ["gunicorn", "--config", "gunicorn.conf.py", "run:app"]
